@@ -1,0 +1,191 @@
+#include <string.h>
+#include <ncurses.h>
+#include <stdlib.h>
+#include "TPlateau.h"
+
+static TPlateau modele = {
+	255, 255, 255, 1, 1, 1, 255, 255, 255,
+	255, 255, 1, 1, 1, 1, 1, 255, 255, 
+	255, 1, 1, 1, 1, 1, 1, 1, 255,
+	1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1,
+	255, 1, 1, 1, 1, 1, 1, 1, 255,
+	255, 255, 1, 1, 1, 1, 1, 255, 255, 
+	255, 255, 255, 1, 1, 1, 255, 255, 255,
+};
+
+static int cherche(TPlateau plateau, SListCoup **coupsOk);
+static int gagne(TPlateau plateau);
+static SListCoup * getCoups(TPlateau plateau);
+
+void init(TPlateau plateau, int x, int y) {
+	cpy(plateau, modele);
+	plateau[y*NB_COLONNE+x] = VIDE;
+}
+
+void print(TPlateau plateau) {
+	int x,y, idx;
+	
+	start_color();
+	init_pair(1, COLOR_YELLOW, COLOR_BLUE);
+	attron(COLOR_PAIR(1));
+	
+	for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+			if(y == 0) {
+				move(0, x+2);
+				printw("%c", 'A'+(char)x);
+			}
+			
+			if(x == 0) {
+				move(y+2, 0);
+				printw("%d", y+1);
+			}
+			
+			move(y+2, x+2);
+			
+			if(plateau[idx] == BILLE) {
+				printw("o");
+			}else if(plateau[idx] == VIDE) {
+				printw(" ");
+			}
+		}
+	}
+	
+	attroff(COLOR_PAIR(1));
+	refresh();
+}
+
+void cpy(TPlateau dst, TPlateau src) {
+	memcpy(dst, src, NB_BILLE * sizeof(unsigned char));
+}
+
+SListCoup * solve(TPlateau plateau) {
+	SListCoup *coupOk = 0;
+	
+	cherche(plateau, &coupOk);
+	
+	return coupOk;
+}
+
+void joue(TPlateau plateau, SCoup *coup) {
+	plateau[coup->depuis] = VIDE;
+	switch(coup->type) {
+		case etcHaut:
+			plateau[coup->depuis-NB_COLONNE] = VIDE;
+			plateau[coup->depuis-NB_COLONNE*2] = BILLE;
+			break;
+		case etcDroite:
+			plateau[coup->depuis+1] = VIDE;
+			plateau[coup->depuis+2] = BILLE;
+			break;
+		case etcBas:
+			plateau[coup->depuis+NB_COLONNE] = VIDE;
+			plateau[coup->depuis+NB_COLONNE*2] = BILLE;
+			break;
+		case etcGauche:
+			plateau[coup->depuis-1] = VIDE;
+			plateau[coup->depuis-2] = BILLE;
+			break;
+	}
+}
+
+int cherche(TPlateau plateau, SListCoup **coupsOk) {
+	SListCoup *coups;
+	
+	if(gagne(plateau)) {
+		return 1;
+	}
+	
+	coups = getCoups(plateau);
+	
+	while(coups != 0) {
+		TPlateau nextPlateau;
+		SCoup *coup = pop(&coups);
+		
+		cpy(nextPlateau, plateau);
+		
+		joue(nextPlateau, coup);
+		print(nextPlateau);
+		//getch();
+		
+		if(cherche(nextPlateau, coupsOk)) {
+			push(coupsOk, coup);
+			
+			return 1;
+		}
+		
+		free(coup);
+	}
+	
+	return 0;
+}
+
+int gagne(TPlateau plateau) {
+	int x,y, idx, nbBille;
+	
+	for(y=idx=nbBille=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+			if(plateau[idx] == BILLE) {
+				if(nbBille == 1) {
+					return 0;
+				}
+				nbBille++;
+			}
+		}
+	}
+	
+	return 1;
+}
+
+SListCoup * getCoups(TPlateau plateau) {
+	SListCoup *lCoup = 0;
+	int x,y, idx;
+	
+	for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+			if(plateau[idx] == VIDE) {
+				if(y < NB_LIGNE - 2 && plateau[idx+NB_COLONNE] == BILLE && plateau[idx+NB_COLONNE*2] == BILLE) {
+					SCoup *coup = (SCoup *)malloc(sizeof(SCoup));
+					
+					coup->type = etcHaut;
+					coup->depuis = idx+NB_COLONNE*2;
+					
+					push(&lCoup, coup);
+				}
+				
+				if(x >=2  &&  plateau[idx-1] == BILLE && plateau[idx-2] == BILLE) {
+					SCoup *coup = (SCoup *)malloc(sizeof(SCoup));
+					
+					coup->type = etcDroite;
+					coup->depuis = idx-2;
+					
+					push(&lCoup, coup);
+				}
+				
+				if(y >= 2 && plateau[idx-NB_COLONNE] == BILLE && plateau[idx-NB_COLONNE*2] == BILLE) {
+					SCoup *coup = (SCoup *)malloc(sizeof(SCoup));
+					
+					coup->type = etcBas;
+					coup->depuis = idx-NB_COLONNE*2;
+					
+					push(&lCoup, coup);
+				}
+				
+				if(x < NB_COLONNE - 2 &&  plateau[idx+1] == BILLE && plateau[idx+2] == BILLE) {
+					SCoup *coup = (SCoup *)malloc(sizeof(SCoup));
+					
+					coup->type = etcGauche;
+					coup->depuis = idx+2;
+					
+					push(&lCoup, coup);
+				}
+			}
+		}
+	}
+	
+	return lCoup;
+}
+
+
