@@ -15,7 +15,7 @@ int taille(SListCoup *list) {
 	return nb;
 }
 
-void push(SListCoup **list, SCoup *coup) {
+void pushCoup(SListCoup **list, SCoup *coup) {
 	SListCoup *new = (SListCoup *)malloc(sizeof(SListCoup));
 	
 	new->coup = coup;
@@ -28,7 +28,7 @@ void push(SListCoup **list, SCoup *coup) {
 	}
 }
 
-SCoup * pop(SListCoup **list) {
+SCoup * popCoup(SListCoup **list) {
 	SCoup *result = (*list)->coup;
 	SListCoup *item = (*list);
 	

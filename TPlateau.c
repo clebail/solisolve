@@ -2,6 +2,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include "TPlateau.h"
+#include "SListPlateau.h"
 
 static TPlateau modele = {
 	255, 255, 255, 1, 1, 1, 255, 255, 255,
@@ -14,6 +15,10 @@ static TPlateau modele = {
 	255, 255, 1, 1, 1, 1, 1, 255, 255, 
 	255, 255, 255, 1, 1, 1, 255, 255, 255,
 };
+
+static SListPlateau *mauvais = 0;
+static int nbMauvais = 0;
+static int nbTestMauvais = 0;
 
 static int cherche(TPlateau plateau, SListCoup **coupsOk);
 static int gagne(TPlateau plateau);
@@ -91,32 +96,75 @@ void joue(TPlateau plateau, SCoup *coup) {
 	}
 }
 
+void rotate(TPlateau plateau, TPlateau new) {
+	int x, y, idx, newIdx;
+	
+	cpy(new, plateau);
+	
+	for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+			newIdx = x * NB_COLONNE + y;
+			new[newIdx] = plateau[idx];
+		}
+	}
+}
+
 int cherche(TPlateau plateau, SListCoup **coupsOk) {
 	SListCoup *coups;
 	
 	if(gagne(plateau)) {
+		deleteList(mauvais);
+		
 		return 1;
 	}
 	
 	coups = getCoups(plateau);
 	
-	while(coups != 0) {
-		TPlateau nextPlateau;
-		SCoup *coup = pop(&coups);
+	if(coups == 0) {
+		TPlateau mv[3];
+		unsigned char *orig = plateau;
+		int i;
 		
-		cpy(nextPlateau, plateau);
+		pushPlateau(&mauvais, plateau);
+		nbMauvais++;
 		
-		joue(nextPlateau, coup);
-		print(nextPlateau);
-		//getch();
-		
-		if(cherche(nextPlateau, coupsOk)) {
-			push(coupsOk, coup);
+		for(i=0;i<3;i++) {
+			rotate(orig, mv[i]);
+			pushPlateau(&mauvais, mv[i]);
+			nbMauvais++;
 			
-			return 1;
+			orig = mv[i];
 		}
 		
-		free(coup);
+		move(0, 20);
+		printw("mauvais: %6d", nbMauvais);
+	}else {
+		while(coups != 0) {
+			TPlateau nextPlateau;
+			SCoup *coup = popCoup(&coups);
+			
+			cpy(nextPlateau, plateau);
+			
+			joue(nextPlateau, coup);
+			print(nextPlateau);
+			
+			if(!inListPlateau(mauvais, nextPlateau)) {
+				if(cherche(nextPlateau, coupsOk)) {
+					pushCoup(coupsOk, coup);
+					
+					return 1;
+				}
+			}else {
+				nbTestMauvais++;
+				
+				move(0, 40);
+				printw("mauvais déjà testé: %10d", nbTestMauvais);
+			}
+			
+			free(coup);
+		}
+		
+		pushPlateau(&mauvais, plateau);
 	}
 	
 	return 0;
@@ -152,7 +200,7 @@ SListCoup * getCoups(TPlateau plateau) {
 					coup->type = etcHaut;
 					coup->depuis = idx+NB_COLONNE*2;
 					
-					push(&lCoup, coup);
+					pushCoup(&lCoup, coup);
 				}
 				
 				if(x >=2  &&  plateau[idx-1] == BILLE && plateau[idx-2] == BILLE) {
@@ -161,7 +209,7 @@ SListCoup * getCoups(TPlateau plateau) {
 					coup->type = etcDroite;
 					coup->depuis = idx-2;
 					
-					push(&lCoup, coup);
+					pushCoup(&lCoup, coup);
 				}
 				
 				if(y >= 2 && plateau[idx-NB_COLONNE] == BILLE && plateau[idx-NB_COLONNE*2] == BILLE) {
@@ -170,7 +218,7 @@ SListCoup * getCoups(TPlateau plateau) {
 					coup->type = etcBas;
 					coup->depuis = idx-NB_COLONNE*2;
 					
-					push(&lCoup, coup);
+					pushCoup(&lCoup, coup);
 				}
 				
 				if(x < NB_COLONNE - 2 &&  plateau[idx+1] == BILLE && plateau[idx+2] == BILLE) {
@@ -179,7 +227,7 @@ SListCoup * getCoups(TPlateau plateau) {
 					coup->type = etcGauche;
 					coup->depuis = idx+2;
 					
-					push(&lCoup, coup);
+					pushCoup(&lCoup, coup);
 				}
 			}
 		}

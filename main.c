@@ -15,7 +15,7 @@ int main(void) {
 	print(plateau);
 	
 	while(solution != 0) {
-		SCoup *coup = pop(&solution);
+		SCoup *coup = popCoup(&solution);
 	
 		joue(plateau, coup);
 		

@@ -9,8 +9,8 @@ typedef struct _SListCoup {
 }SListCoup;
 
 int taille(SListCoup *list);
-void push(SListCoup **list, SCoup *coup);
-SCoup *pop(SListCoup **list);
+void pushCoup(SListCoup **list, SCoup *coup);
+SCoup *popCoup(SListCoup **list);
 
 
 #endif //__SLISTCOUP__
