@@ -6,7 +6,7 @@ ALL = solisolv
 
 all: $(ALL)
 
-$(ALL): main.o TPlateau.o SListCoup.o SListPlateau.o
+$(ALL): main.o TPlateau.o SListCoup.o SListPlateau.o SCoup.o
 	$(CC) -o $@ $(LDFLAGS) $^
 
 %.o: %.c

@@ -8,4 +8,6 @@ typedef struct _SCoup {
 	int depuis;
 } SCoup;
 
+void printCoup(SCoup *coup);
+
 #endif //__SCOUP__

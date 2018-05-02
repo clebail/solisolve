@@ -11,20 +11,18 @@ int main(void) {
 	
 	init(plateau, 3, 0);
 	solution = solve(plateau);
+
+	getch();
 	
-	print(plateau);
+	endwin();
 	
 	while(solution != 0) {
 		SCoup *coup = popCoup(&solution);
 	
-		joue(plateau, coup);
+		printCoup(coup);
 		
-		getch();
-		print(plateau);
 		free(coup);
 	}
-	
-	endwin();
 	
 	return 0;
 }

@@ -19,9 +19,19 @@ void pushPlateau(SListPlateau **list, TPlateau plateau) {
 
 int inListPlateau(SListPlateau *list, TPlateau plateau) {
 	while(list != 0) {
-		if(!memcmp(list->plateau, plateau, NB_BILLE * sizeof(unsigned char))) {
-			return 1;
-		}
+		TPlateau test, roTest;
+		int i = 0;
+		
+		cpy(test, list->plateau);
+		
+		do {
+			if(!memcmp(test, plateau, NB_BILLE * sizeof(unsigned char))) {
+				return 1;
+			}
+			
+			rotate(test, roTest);
+			cpy(test, roTest);
+		}while(++i != 4);
 		
 		list = list->next;
 	}

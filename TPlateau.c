@@ -23,6 +23,7 @@ static int nbTestMauvais = 0;
 static int cherche(TPlateau plateau, SListCoup **coupsOk);
 static int gagne(TPlateau plateau);
 static SListCoup * getCoups(TPlateau plateau);
+static void pushMauvais(TPlateau plateau);
 
 void init(TPlateau plateau, int x, int y) {
 	cpy(plateau, modele);
@@ -99,11 +100,9 @@ void joue(TPlateau plateau, SCoup *coup) {
 void rotate(TPlateau plateau, TPlateau new) {
 	int x, y, idx, newIdx;
 	
-	cpy(new, plateau);
-	
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
-			newIdx = x * NB_COLONNE + y;
+			newIdx = (NB_LIGNE - x - 1) * NB_COLONNE + y;
 			new[newIdx] = plateau[idx];
 		}
 	}
@@ -121,23 +120,8 @@ int cherche(TPlateau plateau, SListCoup **coupsOk) {
 	coups = getCoups(plateau);
 	
 	if(coups == 0) {
-		TPlateau mv[3];
-		unsigned char *orig = plateau;
-		int i;
-		
-		pushPlateau(&mauvais, plateau);
-		nbMauvais++;
-		
-		for(i=0;i<3;i++) {
-			rotate(orig, mv[i]);
-			pushPlateau(&mauvais, mv[i]);
-			nbMauvais++;
-			
-			orig = mv[i];
-		}
-		
-		move(0, 20);
-		printw("mauvais: %6d", nbMauvais);
+		print(plateau);
+		pushMauvais(plateau);
 	}else {
 		while(coups != 0) {
 			TPlateau nextPlateau;
@@ -146,7 +130,7 @@ int cherche(TPlateau plateau, SListCoup **coupsOk) {
 			cpy(nextPlateau, plateau);
 			
 			joue(nextPlateau, coup);
-			print(nextPlateau);
+			//print(nextPlateau);
 			
 			if(!inListPlateau(mauvais, nextPlateau)) {
 				if(cherche(nextPlateau, coupsOk)) {
@@ -159,12 +143,14 @@ int cherche(TPlateau plateau, SListCoup **coupsOk) {
 				
 				move(0, 40);
 				printw("mauvais déjà testé: %10d", nbTestMauvais);
+				refresh();
 			}
 			
 			free(coup);
 		}
 		
-		pushPlateau(&mauvais, plateau);
+		print(plateau);
+		pushMauvais(plateau);
 	}
 	
 	return 0;
@@ -234,6 +220,15 @@ SListCoup * getCoups(TPlateau plateau) {
 	}
 	
 	return lCoup;
+}
+
+void pushMauvais(TPlateau plateau) {
+	pushPlateau(&mauvais, plateau);
+	nbMauvais++;
+	
+	move(0, 20);
+	printw("mauvais: %6d", nbMauvais);
+	refresh();
 }
 
 
