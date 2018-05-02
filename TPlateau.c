@@ -108,6 +108,17 @@ void rotate(TPlateau plateau, TPlateau new) {
 	}
 }
 
+void miror(TPlateau plateau, TPlateau new) {
+	int x, y, idx, newIdx;
+	
+	for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+			newIdx = (NB_LIGNE - y - 1) * NB_COLONNE + x;
+			new[newIdx] = plateau[idx];
+		}
+	}
+}
+
 int cherche(TPlateau plateau, SListCoup **coupsOk) {
 	SListCoup *coups;
 	

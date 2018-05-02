@@ -18,5 +18,6 @@ void cpy(TPlateau dst, TPlateau src);
 SListCoup * solve(TPlateau plateau);
 void joue(TPlateau plateau, SCoup *coup);
 void rotate(TPlateau plateau, TPlateau new);
+void miror(TPlateau plateau, TPlateau new);
 
 #endif //__TPLATEAU__
