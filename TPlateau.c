@@ -16,7 +16,7 @@ static TPlateau modele = {
 	255, 255, 255, 1, 1, 1, 255, 255, 255,
 };
 
-static SListPlateau *mauvais = 0;
+static SListPlateau *mauvais[NB_BILLE];
 static int nbMauvais = 0;
 static int nbTestMauvais = 0;
 
@@ -28,6 +28,8 @@ static void pushMauvais(TPlateau plateau);
 void init(TPlateau plateau, int x, int y) {
 	cpy(plateau, modele);
 	plateau[y*NB_COLONNE+x] = VIDE;
+	
+	memset(mauvais, 0, sizeof(SListPlateau *) * NB_BILLE);
 }
 
 void print(TPlateau plateau) {
@@ -108,11 +110,29 @@ void rotate(TPlateau plateau, TPlateau new) {
 	}
 }
 
+int getNbBille(TPlateau plateau) {
+	int x, y, idx, nbBille = 0;
+	
+	for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+			if(plateau[idx] == BILLE) {
+				nbBille++;
+			}
+		}
+	}
+	
+	return nbBille;
+}
+
 int cherche(TPlateau plateau, SListCoup **coupsOk) {
 	SListCoup *coups;
 	
 	if(gagne(plateau)) {
-		deleteList(mauvais);
+		int i;
+		
+		for(i=0;i<NB_BILLE;i++) {
+			deleteList(mauvais[i]);
+		}
 		
 		return 1;
 	}
@@ -124,6 +144,7 @@ int cherche(TPlateau plateau, SListCoup **coupsOk) {
 		pushMauvais(plateau);
 	}else {
 		while(coups != 0) {
+			int nbBille = 0;
 			TPlateau nextPlateau;
 			SCoup *coup = popCoup(&coups);
 			
@@ -132,7 +153,9 @@ int cherche(TPlateau plateau, SListCoup **coupsOk) {
 			joue(nextPlateau, coup);
 			//print(nextPlateau);
 			
-			if(!inListPlateau(mauvais, nextPlateau)) {
+			nbBille = getNbBille(plateau);
+			
+			if(!inListPlateau(mauvais[nbBille], nextPlateau)) {
 				if(cherche(nextPlateau, coupsOk)) {
 					pushCoup(coupsOk, coup);
 					
@@ -223,7 +246,8 @@ SListCoup * getCoups(TPlateau plateau) {
 }
 
 void pushMauvais(TPlateau plateau) {
-	pushPlateau(&mauvais, plateau);
+	int nbBille = getNbBille(plateau);
+	pushPlateau(&mauvais[nbBille], plateau);
 	nbMauvais++;
 	
 	move(0, 20);

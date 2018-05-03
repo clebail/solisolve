@@ -18,5 +18,6 @@ void cpy(TPlateau dst, TPlateau src);
 SListCoup * solve(TPlateau plateau);
 void joue(TPlateau plateau, SCoup *coup);
 void rotate(TPlateau plateau, TPlateau new);
+int getNbBille(TPlateau plateau);
 
 #endif //__TPLATEAU__
