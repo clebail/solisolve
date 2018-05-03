@@ -19,6 +19,7 @@ static TPlateau modele = {
 static SListPlateau *mauvais[NB_BILLE];
 static int nbMauvais = 0;
 static int nbTestMauvais = 0;
+static int best = NB_BILLE;
 
 static int cherche(TPlateau plateau, SListCoup **coupsOk);
 static int gagne(TPlateau plateau);
@@ -163,11 +164,18 @@ int cherche(TPlateau plateau, SListCoup **coupsOk) {
 			cpy(nextPlateau, plateau);
 			
 			joue(nextPlateau, coup);
-			//print(nextPlateau);
 			
 			nbBille = getNbBille(nextPlateau);
 			
 			if(!inListPlateau(mauvais[nbBille], nextPlateau)) {
+				if(nbBille < best) {
+					best = nbBille;
+				}
+				
+				move(1, 20);
+				printw("Meilleur score: %2d", best);
+				refresh();
+				
 				if(cherche(nextPlateau, coupsOk)) {
 					pushCoup(coupsOk, coup);
 					
