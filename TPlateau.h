@@ -19,5 +19,6 @@ SListCoup * solve(TPlateau plateau);
 void joue(TPlateau plateau, SCoup *coup);
 void rotate(TPlateau plateau, TPlateau new);
 int getNbBille(TPlateau plateau);
+void miror(TPlateau plateau, TPlateau new);
 
 #endif //__TPLATEAU__

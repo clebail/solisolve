@@ -19,17 +19,30 @@ void pushPlateau(SListPlateau **list, TPlateau plateau) {
 
 int inListPlateau(SListPlateau *list, TPlateau plateau) {
 	while(list != 0) {
-		TPlateau test, roTest;
+		TPlateau test, roTest, miTest;
 		int i = 0;
 		
 		cpy(test, list->plateau);
-		
 		do {
 			if(!memcmp(test, plateau, NB_BILLE * sizeof(unsigned char))) {
 				return 1;
 			}
 			
+			miror(test, miTest);
+			if(!memcmp(miTest, plateau, NB_BILLE * sizeof(unsigned char))) {
+				return 1;
+			}
+			
 			rotate(test, roTest);
+			if(!memcmp(roTest, plateau, NB_BILLE * sizeof(unsigned char))) {
+				return 1;
+			}
+			
+			miror(roTest, miTest);
+			if(!memcmp(miTest, plateau, NB_BILLE * sizeof(unsigned char))) {
+				return 1;
+			}
+			
 			cpy(test, roTest);
 		}while(++i != 4);
 		

@@ -124,6 +124,18 @@ int getNbBille(TPlateau plateau) {
 	return nbBille;
 }
 
+
+void miror(TPlateau plateau, TPlateau new) {
+	int x, y, idx, newIdx;
+	
+	for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+			newIdx = (NB_LIGNE - y - 1) * NB_COLONNE + x;
+			new[newIdx] = plateau[idx];
+		}
+	}
+}
+
 int cherche(TPlateau plateau, SListCoup **coupsOk) {
 	SListCoup *coups;
 	
@@ -153,7 +165,7 @@ int cherche(TPlateau plateau, SListCoup **coupsOk) {
 			joue(nextPlateau, coup);
 			//print(nextPlateau);
 			
-			nbBille = getNbBille(plateau);
+			nbBille = getNbBille(nextPlateau);
 			
 			if(!inListPlateau(mauvais[nbBille], nextPlateau)) {
 				if(cherche(nextPlateau, coupsOk)) {
