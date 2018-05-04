@@ -25,7 +25,7 @@ public:
 	CPlateau(unsigned char * modele, int idx);
 	CPlateau(const CPlateau& other, CCoup coup);
 	~CPlateau(void);
-	void print(void);
+	void print(int offsetX = 0, int offsetY = 0);
 	bool operator == (const CPlateau& other);
 	std::list<CCoup> getNextCoups(void);
 };

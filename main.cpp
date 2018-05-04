@@ -3,13 +3,13 @@
 #include "CSolver.h"
 
 int main(void) {
-	//initscr();
+	initscr();
 	CSolver solver;
 	
 	solver.process();
-	//getch();
+	getch();
 	
-	//endwin();
+	endwin();
 	
 	return 0;
 }

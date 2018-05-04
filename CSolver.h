@@ -11,7 +11,7 @@ private:
 	
 	void init(void);
 	bool addPlateauIfNotExistst(std::set<CPlateau *, SPlateauCmp> &plateaux, CPlateau *plateau);
-	void clear(void);
+	void clearPlateaux(void);
 public:
 	CSolver(void);
 	~CSolver(void);

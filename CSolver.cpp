@@ -15,31 +15,42 @@ static unsigned char modele[NB_BILLE] = {
 };
 
 void CSolver::init(void) {
-	int x, y, idx;
+	int x, y, idx, offsetX, offsetY;
 	
-	for(y=idx=0;y<NB_LIGNE;y++) {
+	for(y=idx=offsetX=offsetY=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
 			if(modele[idx] == VIDE) {
 				CPlateau *plateau = new CPlateau(modele, idx);
 				
-				addPlateauIfNotExistst(plateaux, plateau);
+				if(addPlateauIfNotExistst(plateaux, plateau)) {
+					plateau->print(offsetX, offsetY);
+							
+					offsetX+=12;
+					if(offsetX == 120) {
+						offsetX = 0;
+						offsetY+=12;
+					}
+				}
 			}
 		}
 	}
+	
+	refresh();
+	getch();
 }
 
-bool CSolver::addPlateauIfNotExistst(std::set<CPlateau *, SPlateauCmp> &plateaux, CPlateau *plateau) {
-	if(plateaux.find(plateau) != plateaux.end()) {
+bool CSolver::addPlateauIfNotExistst(std::set<CPlateau *, SPlateauCmp> &plx, CPlateau *plateau) {
+	if(plx.find(plateau) != plx.end()) {
 		delete plateau;
 		return false;
 	}
 	
-	plateaux.insert(plateau);
+	plx.insert(plateau);
 	
 	return true;
 }
 
-void CSolver::clear(void) {
+void CSolver::clearPlateaux(void) {
 	std::set<CPlateau *, SPlateauCmp>::iterator i = plateaux.begin();
 	
 	while(i != plateaux.end()) {
@@ -57,6 +68,7 @@ CSolver::CSolver(void) {
 }
 
 CSolver::~CSolver(void) {
+	clearPlateaux();
 }
 
 int CSolver::getNbPlateaux(void) {
@@ -70,28 +82,41 @@ void CSolver::process(void) {
 	init();
 	
 	while(!fini) {
-		printf("Nombre de bille: %d , nombre de plateau : %lu\n", nbBille, plateaux.size());
+		//printf("Nombre de bille: %d , nombre de plateau : %lu\n", nbBille, plateaux.size());
 		
 		nbBille++;
 		fini = nbBille == MAX_BILLE;
 		if(!fini) {
 			std::set<CPlateau *, SPlateauCmp>::iterator itPlateau;
 			std::set<CPlateau *, SPlateauCmp> newPlateaux;
+			int offsetX = 0, offsetY = 0;
+			clear();
 			
 			for(itPlateau=plateaux.begin();itPlateau!=plateaux.end();itPlateau++) {
 				std::list<CCoup> nextCoups = (*itPlateau)->getNextCoups();
 				std::list<CCoup>::iterator itCoup;
 				
-				printf("%lu coups possible\n", nextCoups.size());
+				//printf("%lu coups possible\n", nextCoups.size());
 				
 				for(itCoup=nextCoups.begin();itCoup!=nextCoups.end();itCoup++) {
 					CPlateau *plateau = new CPlateau(*(*itPlateau), *itCoup);
 					
-					addPlateauIfNotExistst(newPlateaux, plateau);
+					if(addPlateauIfNotExistst(newPlateaux, plateau)) {
+						plateau->print(offsetX, offsetY);
+							
+						offsetX+=12;
+						if(offsetX == 120) {
+						offsetX = 0;
+						offsetY+=12;
+					}
+					}
 				}
 			}
 			
-			clear();
+			refresh();
+			getch();
+			
+			clearPlateaux();
 			plateaux.insert(newPlateaux.begin(), newPlateaux.end());
 		}
 	}

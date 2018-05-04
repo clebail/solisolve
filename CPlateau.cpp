@@ -6,7 +6,7 @@ void CPlateau::mirror(void) {
 	int x, y, idx, idxOther;
 	
 	for(y=idx=0;y<NB_LIGNE/2;y++) {
-		idxOther=NB_BILLE - (y + 1) * NB_COLONNE;
+		idxOther = NB_BILLE - (y + 1) * NB_COLONNE;
 		for(x=0;x<NB_COLONNE;x++,idx++,idxOther++) {
 			swap(&plateau[idx], &plateau[idxOther]);
 		}
@@ -72,8 +72,8 @@ CPlateau::~CPlateau(void) {
 	coups.clear();
 }
 
-void CPlateau::print(void) {
-	int x,y, idx;
+void CPlateau::print(int offsetX, int offsetY) {
+	int x, y, idx;
 	
 	start_color();
 	init_pair(1, COLOR_YELLOW, COLOR_BLUE);
@@ -82,16 +82,16 @@ void CPlateau::print(void) {
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
 			if(y == 0) {
-				move(0, x+2);
+				move(offsetY, x + 2 + offsetX);
 				printw("%c", 'A'+(char)x);
 			}
 			
 			if(x == 0) {
-				move(y+2, 0);
+				move(y + 2 + offsetY, offsetX);
 				printw("%d", y+1);
 			}
 			
-			move(y+2, x+2);
+			move(y + 2 + offsetY, x + 2 + offsetX);
 			
 			if(plateau[idx] == BILLE) {
 				printw("o");
