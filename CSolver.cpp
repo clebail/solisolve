@@ -45,11 +45,12 @@ void CSolver::clear(void) {
 	while(i != plateaux.end()) {
 		CPlateau *p = *i;
 		
-		plateaux.erase(i);
 		delete p;
 		
 		i++;
 	}
+	
+	plateaux.clear();
 }
 
 CSolver::CSolver(void) {
@@ -63,17 +64,17 @@ int CSolver::getNbPlateaux(void) {
 }
 
 void CSolver::process(void) {
-	bool gagne = false;
+	bool fini = false;
 	int nbBille = 1;
 	
 	init();
 	
-	while(!gagne) {
+	while(!fini) {
 		printf("Nombre de bille: %d , nombre de plateau : %lu\n", nbBille, plateaux.size());
 		
 		nbBille++;
-		gagne = nbBille == MAX_BILLE;
-		if(!gagne) {
+		fini = nbBille == MAX_BILLE;
+		if(!fini) {
 			std::set<CPlateau *, SPlateauCmp>::iterator itPlateau;
 			std::set<CPlateau *, SPlateauCmp> newPlateaux;
 			
