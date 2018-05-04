@@ -3,10 +3,13 @@
 #include "CSolver.h"
 
 int main(void) {
+	//initscr();
 	CSolver solver;
 	
-	std::cout << solver.getNbFeuille() << std::endl;
 	solver.process();
+	//getch();
+	
+	//endwin();
 	
 	return 0;
 }

@@ -2,6 +2,7 @@
 #define __CPlateau__
 
 #include <list>
+#include <string>
 #include "CCoup.h"
 
 #define NB_COLONNE			9
@@ -10,15 +11,23 @@
 #define UNDEF				((unsigned char)255)
 #define BILLE				((unsigned char)1)
 #define VIDE				((unsigned char)0)
-#define MAX_BILLE			56
+#define MAX_BILLE			57
 
 class CPlateau {
 private:
 	unsigned char plateau[NB_BILLE];
+	std::list<CCoup> coups;
+	
+	void mirror(void);
+	void rotate(void);
+	void swap(unsigned char *c1, unsigned char *c2);
 public:
-	CPlateau(unsigned char * modele, int x, int y);
+	CPlateau(unsigned char * modele, int idx);
 	CPlateau(const CPlateau& other, CCoup coup);
+	~CPlateau(void);
 	void print(void);
+	bool operator == (const CPlateau& other);
+	std::list<CCoup> getNextCoups(void);
 };
 
 #endif //__CPlateau__

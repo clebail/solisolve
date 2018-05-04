@@ -1,18 +1,21 @@
 #ifndef __CSOLVER__
 #define __CSOLVER__
 
-#include <list>
-#include "CFeuille.h"
+#include <set>
+#include "CPlateau.h"
+#include "SPlateauCmp.h"
 
 class CSolver {
 private:
-	std::list<CFeuille *> feuilles;
+	std::set<CPlateau *, SPlateauCmp> plateaux;
 	
-	void passe(int nbBille);
+	void init(void);
+	bool addPlateauIfNotExistst(std::set<CPlateau *, SPlateauCmp> &plateaux, CPlateau *plateau);
+	void clear(void);
 public:
 	CSolver(void);
 	~CSolver(void);
-	int getNbFeuille(void);
+	int getNbPlateaux(void);
 	void process(void);
 };
 
