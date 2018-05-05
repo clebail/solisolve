@@ -2,29 +2,37 @@
 #include <ncurses.h>
 #include "CPlateau.h"
 
-void CPlateau::mirror(void) {
+void CPlateau::mirror(unsigned char *pl) {
 	int x, y, idx, idxOther;
+    
+    if(pl == 0) {
+        pl = plateau;
+    }
 	
 	for(y=idx=0;y<NB_LIGNE/2;y++) {
 		idxOther = NB_BILLE - (y + 1) * NB_COLONNE;
 		for(x=0;x<NB_COLONNE;x++,idx++,idxOther++) {
-			swap(&plateau[idx], &plateau[idxOther]);
+			swap(&pl[idx], &pl[idxOther]);
 		}
 	}
 }
 
-void CPlateau::rotate(void) {
+void CPlateau::rotate(unsigned char *pl) {
 	unsigned char newPlateau[NB_BILLE];
 	int x, y, idx, newIdx;
+    
+    if(pl == 0) {
+        pl = plateau;
+    }
 	
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
 			newIdx = (NB_LIGNE - x - 1) * NB_COLONNE + y;
-			newPlateau[newIdx] = plateau[idx];
+			newPlateau[newIdx] = pl[idx];
 		}
 	}
 	
-	memcpy(plateau, newPlateau, NB_BILLE * sizeof(unsigned char));
+	memcpy(pl, newPlateau, NB_BILLE * sizeof(unsigned char));
 }
 
 void CPlateau::swap(unsigned char *c1, unsigned char *c2) {
@@ -72,8 +80,12 @@ CPlateau::~CPlateau(void) {
 	coups.clear();
 }
 
-void CPlateau::print(int offsetX, int offsetY) {
+void CPlateau::print(int offsetX, int offsetY, unsigned char *pl) {
 	int x, y, idx;
+    
+    if(pl == 0) {
+        pl = plateau;
+    }
 	
 	start_color();
 	init_pair(1, COLOR_YELLOW, COLOR_BLUE);
@@ -93,9 +105,9 @@ void CPlateau::print(int offsetX, int offsetY) {
 			
 			move(y + 2 + offsetY, x + 2 + offsetX);
 			
-			if(plateau[idx] == BILLE) {
+			if(pl[idx] == BILLE) {
 				printw("o");
-			}else if(plateau[idx] == VIDE) {
+			}else if(pl[idx] == VIDE) {
 				printw(" ");
 			}
 		}
@@ -104,49 +116,26 @@ void CPlateau::print(int offsetX, int offsetY) {
 	attroff(COLOR_PAIR(1));
 }
 
-bool CPlateau::operator == (const CPlateau& other) {
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
+bool CPlateau::operator < (const CPlateau& other) {
+    int i, j;
+    unsigned char test[NB_BILLE];
+    
+    memcpy(test, plateau, NB_BILLE * sizeof(unsigned char));
+
+    for(i=0;i<2;i++) {
+        for(j=0;j<4;j++) {
+            
+            if(memcmp(test, other.plateau, NB_BILLE * sizeof(unsigned char)) == 0) {
+                return false;
+            }
+            
+            rotate(test);
+        }
+        
+        mirror(test);
+    }
 	
-	rotate();
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
-	
-	rotate();
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
-	
-	rotate();
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
-	
-	rotate();
-	mirror();
-	
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
-	
-	rotate();
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
-	
-	rotate();
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
-	
-	rotate();
-	if(!memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char))) {
-		return true;
-	}
-	
-	return false;
+	return memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char));
 }
 
 std::list<CCoup> CPlateau::getNextCoups(void) {
@@ -156,23 +145,23 @@ std::list<CCoup> CPlateau::getNextCoups(void) {
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
 			if(plateau[idx] == BILLE) {
-				if(y < NB_LIGNE-2 && plateau[idx+NB_COLONNE] == VIDE && plateau[idx+NB_COLONNE*2] == VIDE) { //Haut
-					CCoup coup(CCoup::etcHaut, idx+NB_COLONNE*2);
+				if(y < NB_LIGNE - 2 && plateau[idx + NB_COLONNE] == VIDE && plateau[idx + NB_COLONNE * 2] == VIDE) { //Haut
+					CCoup coup(CCoup::etcHaut, idx + NB_COLONNE * 2);
 					coups.push_back(coup);
 				} 
 				
-				if(x >= 2  && plateau[idx-1] == VIDE && plateau[idx-2] == VIDE) { //Droite
-					CCoup coup(CCoup::etcDroite, idx-2);
+				if(x >= 2  && plateau[idx - 1] == VIDE && plateau[idx - 2] == VIDE) { //Droite
+					CCoup coup(CCoup::etcDroite, idx - 2);
 					coups.push_back(coup);
 				} 
 				
-				if(y >= 2 && plateau[idx-NB_COLONNE] == VIDE && plateau[idx-NB_COLONNE*2] == VIDE) { //Bas
-					CCoup coup(CCoup::etcBas, idx-NB_COLONNE*2);
+				if(y >= 2 && plateau[idx - NB_COLONNE] == VIDE && plateau[idx - NB_COLONNE * 2] == VIDE) { //Bas
+					CCoup coup(CCoup::etcBas, idx - NB_COLONNE * 2);
 					coups.push_back(coup);
 				} 
 				
-				if(x > NB_COLONNE-2  && plateau[idx+1] == VIDE && plateau[idx+2] == VIDE) { //Gauche
-					CCoup coup(CCoup::etcGauche, idx+2);
+				if(x > NB_COLONNE - 2  && plateau[idx + 1] == VIDE && plateau[idx + 2] == VIDE) { //Gauche
+					CCoup coup(CCoup::etcGauche, idx + 2);
 					coups.push_back(coup);
 				}
 			}
@@ -182,3 +171,19 @@ std::list<CCoup> CPlateau::getNextCoups(void) {
 	return coups;
 }
 
+std::list<CCoup> CPlateau::getCoups(void) {
+    return coups;
+}
+
+void CPlateau::printVide(void) {
+    int x, y, idx;
+	
+	for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+            if(plateau[idx] == VIDE) {
+                printf("Départ: %c,%d\n", x + 'A', y + 1);
+                return;
+            }
+        }
+    }
+}

@@ -18,16 +18,18 @@ private:
 	unsigned char plateau[NB_BILLE];
 	std::list<CCoup> coups;
 	
-	void mirror(void);
-	void rotate(void);
+	void mirror(unsigned char *pl = 0);
+	void rotate(unsigned char *pl = 0);
 	void swap(unsigned char *c1, unsigned char *c2);
 public:
 	CPlateau(unsigned char * modele, int idx);
 	CPlateau(const CPlateau& other, CCoup coup);
 	~CPlateau(void);
-	void print(int offsetX = 0, int offsetY = 0);
-	bool operator == (const CPlateau& other);
+	void print(int offsetX = 0, int offsetY = 0, unsigned char *pl = 0);
+	bool operator < (const CPlateau& other);
 	std::list<CCoup> getNextCoups(void);
+    std::list<CCoup> getCoups(void);
+    void printVide(void);
 };
 
 #endif //__CPlateau__

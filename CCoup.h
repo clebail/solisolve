@@ -13,6 +13,7 @@ public:
 	CCoup(CCoup::ETypeCoup type, int depuis);
 	const CCoup::ETypeCoup& getType(void);
 	const int& getDepuis(void);
+    void print(void);
 };
 
 #endif //__CCOUP__
