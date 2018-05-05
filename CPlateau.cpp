@@ -135,7 +135,7 @@ bool CPlateau::operator < (const CPlateau& other) {
         mirror(test);
     }
 	
-	return memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char));
+	return memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char)) < 0;
 }
 
 std::list<CCoup> CPlateau::getNextCoups(void) {
