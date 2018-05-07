@@ -1,16 +1,15 @@
 #ifndef __CSOLVER__
 #define __CSOLVER__
 
-#include <set>
+#include "CPlateaux.h"
 #include "CPlateau.h"
-#include "SPlateauCmp.h"
 
 class CSolver {
 private:
-	std::set<CPlateau *, SPlateauCmp> plateaux;
+	CPlateaux *plateaux;
 	
 	void init(void);
-	bool addPlateauIfNotExistst(std::set<CPlateau *, SPlateauCmp> &plateaux, CPlateau *plateau);
+	bool addPlateauIfNotExistst(CPlateaux *plateaux, CPlateau *plateau);
 	void clearPlateaux(void);
 public:
 	CSolver(void);

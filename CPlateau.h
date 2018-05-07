@@ -17,19 +17,24 @@ class CPlateau {
 private:
 	unsigned char plateau[NB_BILLE];
 	std::list<CCoup> coups;
+    unsigned poids;
 	
 	void mirror(unsigned char *pl = 0);
 	void rotate(unsigned char *pl = 0);
 	void swap(unsigned char *c1, unsigned char *c2);
+    void calculPoids(void);
+    static int getNextIdx(int idx);
 public:
 	CPlateau(unsigned char * modele, int idx);
 	CPlateau(const CPlateau& other, CCoup coup);
 	~CPlateau(void);
 	void print(int offsetX = 0, int offsetY = 0, unsigned char *pl = 0);
-	bool operator < (const CPlateau& other);
-	std::list<CCoup> getNextCoups(void);
+	bool equal(CPlateau *other);
+    bool inf(CPlateau *other);
+	std::list<CCoup> getNextCoups(int numCoup);
     std::list<CCoup> getCoups(void);
     void printVide(void);
+    static void testModele(int nbBille);
 };
 
 #endif //__CPlateau__

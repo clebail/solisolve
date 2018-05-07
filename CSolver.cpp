@@ -2,7 +2,7 @@
 #include <iostream>
 #include "CSolver.h"
 
-#define MAX_TEST        15000
+#define MAX_TEST      20000
 
 static unsigned char modele[NB_BILLE] = {
 	255, 255, 255, 0, 0, 0, 255, 255, 255,
@@ -32,42 +32,50 @@ void CSolver::init(void) {
 			}
 		}
 	}
+	
+	std::list<CPlateau *>::iterator it;
+    int nb=0;
+    x=y=0;
+    initscr();
+    for(it=plateaux->begin();it!=plateaux->end();it++) {
+        (*it)->print(x, y);
+        
+        if(nb < 10) {
+            nb++;
+            x+=12;
+        } else {
+            nb=x=0;
+            y+=12;
+        }
+    }
+    refresh();
+    getch();
+    endwin();
 }
 
-bool CSolver::addPlateauIfNotExistst(std::set<CPlateau *, SPlateauCmp> &plx, CPlateau *plateau) {
-	if(plx.find(plateau) != plx.end()) {
+bool CSolver::addPlateauIfNotExistst(CPlateaux *plx, CPlateau *plateau) {
+	if(!plx->add(plateau)) {
 		delete plateau;
 		return false;
 	}
-	
-	plx.insert(plateau);
 	
 	return true;
 }
 
 void CSolver::clearPlateaux(void) {
-	std::set<CPlateau *, SPlateauCmp>::iterator i = plateaux.begin();
-    
-	while(i != plateaux.end()) {
-		CPlateau *p = *i;
-		
-		delete p;
-		
-		i++;
-	}
 	
-	plateaux.clear();
 }
 
 CSolver::CSolver(void) {
+    plateaux = new CPlateaux();
 }
 
 CSolver::~CSolver(void) {
-	clearPlateaux();
+	delete plateaux;
 }
 
 int CSolver::getNbPlateaux(void) {
-	return plateaux.size();
+	return plateaux->size();
 }
 
 void CSolver::process(void) {
@@ -77,18 +85,18 @@ void CSolver::process(void) {
 	init();
 	
 	while(!fini) {
-		printf("Nombre de bille: %d , nombre de plateau : %lu\n", nbBille, plateaux.size());
+		printf("Nombre de bille: %d , nombre de plateau : %lu\n", nbBille, plateaux->size());
 		
 		nbBille++;
 		fini = nbBille == MAX_BILLE;
 		if(!fini) {
-			std::set<CPlateau *, SPlateauCmp>::iterator itPlateau;
-			std::set<CPlateau *, SPlateauCmp> newPlateaux;
+			std::list<CPlateau *>::iterator itPlateau;
+			CPlateaux *newPlateaux = new CPlateaux();
             int nbTest = 0;
 			clear();
 			
-			for(itPlateau=plateaux.begin();itPlateau!=plateaux.end();itPlateau++) {
-				std::list<CCoup> nextCoups = (*itPlateau)->getNextCoups();
+			for(itPlateau=plateaux->begin();itPlateau!=plateaux->end();itPlateau++) {
+				std::list<CCoup> nextCoups = (*itPlateau)->getNextCoups(nbBille % 4);
 				std::list<CCoup>::iterator itCoup;
 				
 				for(itCoup=nextCoups.begin();itCoup!=nextCoups.end();itCoup++) {
@@ -102,13 +110,13 @@ void CSolver::process(void) {
 				}
 			}
 			
-			clearPlateaux();
-			plateaux.insert(newPlateaux.begin(), newPlateaux.end());
+			delete plateaux;
+            plateaux = newPlateaux;
 		}
 	}
 	
-	if(plateaux.size() >= 1) {
-        std::set<CPlateau *, SPlateauCmp>::iterator itPlateau = plateaux.begin();
+	if(plateaux->size() >= 1) {
+        std::list<CPlateau *>::iterator itPlateau = plateaux->begin();
         CPlateau *plateau = *itPlateau;
         std::list<CCoup> coups = plateau->getCoups();
         std::list<CCoup>::iterator itCoup;

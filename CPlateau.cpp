@@ -2,6 +2,18 @@
 #include <ncurses.h>
 #include "CPlateau.h"
 
+static unsigned modele[NB_BILLE] = {
+	 0,  0,   0,   1,   16,   1,   0,  0,  0,
+	 0,  0,   2,   4,   32,   4,   2,  0,  0, 
+	 0,  2,  64,   8,  128,   8,  64,  2,  0,
+	 1,  4,   8, 256,  512, 256,   8,  4,  1,
+	16, 32, 128, 512, 1024, 512, 128, 32, 16,
+	 1,  4,   8, 256,  512, 256,   8,  4,  1,
+	 0,  2,  64,   8,  128,   8,  64,  2,  0,
+	 0,  0,   2,   4,   32,   4,   2,  0,  0, 
+	 0,  0,   0,   1,   16,   1,   0,  0,  0
+};
+
 void CPlateau::mirror(unsigned char *pl) {
 	int x, y, idx, idxOther;
     
@@ -41,9 +53,41 @@ void CPlateau::swap(unsigned char *c1, unsigned char *c2) {
 	*c2 = t;
 }
 
+void CPlateau::calculPoids(void) {
+    int x, y, idx;
+    
+    poids = 0;
+    
+    for(y=idx=0;y<NB_LIGNE;y++) {
+		for(x=0;x<NB_COLONNE;x++,idx++) {
+            poids += modele[idx] * plateau[idx];
+        }
+    }
+}
+
+int CPlateau::getNextIdx(int idx) {
+    int x = idx % NB_COLONNE;
+    int y = idx / NB_COLONNE;
+    
+    do {
+        x++;
+        if(x == NB_COLONNE) {
+            x = 0;
+            y++;
+        }
+        
+        idx = y * NB_COLONNE + x;
+    }while(!modele[idx]);
+    
+    return idx;
+}
+    
+
 CPlateau::CPlateau(unsigned char *modele, int idx) {
 	memcpy(plateau, modele, NB_BILLE * sizeof(unsigned char));
 	plateau[idx] = BILLE;
+    
+    calculPoids();
 }
 
 CPlateau::CPlateau(const CPlateau& other, CCoup coup) {
@@ -74,6 +118,8 @@ CPlateau::CPlateau(const CPlateau& other, CCoup coup) {
 	
 	coups.push_back(coup);
 	coups.insert(coups.end(), other.coups.begin(), other.coups.end());
+    
+    calculPoids();
 }
 
 CPlateau::~CPlateau(void) {
@@ -90,20 +136,23 @@ void CPlateau::print(int offsetX, int offsetY, unsigned char *pl) {
 	start_color();
 	init_pair(1, COLOR_YELLOW, COLOR_BLUE);
 	attron(COLOR_PAIR(1));
+    
+    move(offsetY, offsetX);
+    printw("Poids: %u", poids);
 	
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
 			if(y == 0) {
-				move(offsetY, x + 2 + offsetX);
+				move(offsetY + 1, x + 2 + offsetX);
 				printw("%c", 'A'+(char)x);
 			}
 			
 			if(x == 0) {
-				move(y + 2 + offsetY, offsetX);
+				move(y + 2 + offsetY + 1, offsetX);
 				printw("%d", y+1);
 			}
 			
-			move(y + 2 + offsetY, x + 2 + offsetX);
+			move(y + 2 + offsetY + 1, x + 2 + offsetX);
 			
 			if(pl[idx] == BILLE) {
 				printw("o");
@@ -116,17 +165,16 @@ void CPlateau::print(int offsetX, int offsetY, unsigned char *pl) {
 	attroff(COLOR_PAIR(1));
 }
 
-bool CPlateau::operator < (const CPlateau& other) {
-    int i, j;
+bool CPlateau::equal(CPlateau *other) {
+    /*int i, j;
     unsigned char test[NB_BILLE];
     
     memcpy(test, plateau, NB_BILLE * sizeof(unsigned char));
 
     for(i=0;i<2;i++) {
         for(j=0;j<4;j++) {
-            
-            if(memcmp(test, other.plateau, NB_BILLE * sizeof(unsigned char)) == 0) {
-                return false;
+            if(memcmp(test, other->plateau, NB_BILLE * sizeof(unsigned char)) == 0) {
+                return true;
             }
             
             rotate(test);
@@ -135,10 +183,14 @@ bool CPlateau::operator < (const CPlateau& other) {
         mirror(test);
     }
 	
-	return memcmp(plateau, other.plateau, NB_BILLE * sizeof(unsigned char)) < 0;
+	return false;*/
+    return poids == other->poids;
 }
 
-std::list<CCoup> CPlateau::getNextCoups(void) {
+bool CPlateau::inf(CPlateau *other) {
+}
+
+std::list<CCoup> CPlateau::getNextCoups(int numCoup) {
 	std::list<CCoup> coups;
 	int x, y, idx;
 	
@@ -186,4 +238,32 @@ void CPlateau::printVide(void) {
             }
         }
     }
+}
+
+void CPlateau::testModele(int nbBille) {
+    int *idxBille = new int[nbBille];
+    int x, y, idx, ib;
+    
+    memset(idxBille, 255, nbBille * sizeof(int));
+    
+    while(idxBille[0] < NB_BILLE - 5) {
+        idxBille[0] = CPlateau::getNextIdx(idxBille[0]);
+        memset(idxBille+1, 255, (nbBille - 1) * sizeof(int));
+        
+        idxBille[1] = CPlateau::getNextIdx(idxBille[0]);
+        do {
+            int poids = 0;
+            
+            for(ib=0;ib<nbBille;ib++) {
+                poids += modele[idxBille[ib]];
+            }
+            
+            printf("%d %d %d\n", idxBille[0], idxBille[1], poids);
+            idxBille[1] = CPlateau::getNextIdx(idxBille[1]);
+        }while(idxBille[1] < NB_BILLE - 3);
+        
+        getchar();
+    }
+    
+    delete[] idxBille;
 }
