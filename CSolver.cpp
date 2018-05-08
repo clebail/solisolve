@@ -1,24 +1,26 @@
 #include <ncurses.h>
+#include <stdlib.h>
+#include <time.h>
 #include <iostream>
 #include "CSolver.h"
 
-#define MAX_TEST      20000
+#define MAX_TEST      40000
 
 static unsigned char modele[NB_BILLE] = {
-	255, 255, 255, 0, 0, 0, 255, 255, 255,
-	255, 255, 0, 0, 0, 0, 0, 255, 255, 
-	255, 0, 0, 0, 0, 0, 0, 0, 255,
-	0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0,
-	255, 0, 0, 0, 0, 0, 0, 0, 255,
-	255, 255, 0, 0, 0, 0, 0, 255, 255, 
-	255, 255, 255, 0, 0, 0, 255, 255, 255,
+	255, 255, 0, 0, 0, 255, 255, 
+	255, 0, 0, 0, 0, 0, 255, 
+	0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0,
+	255, 0, 0, 0, 0, 0, 255,
+	255, 255, 0, 0, 0, 255, 255, 
 };
 
 void CSolver::init(void) {
 	int x, y, idx, nbTest = 0;
 	
+	srand(time(NULL));	
+
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
 			if(modele[idx] == VIDE) {
@@ -96,11 +98,11 @@ void CSolver::process(void) {
 			clear();
 			
 			for(itPlateau=plateaux->begin();itPlateau!=plateaux->end();itPlateau++) {
-				std::list<CCoup> nextCoups = (*itPlateau)->getNextCoups(nbBille % 4);
+				std::list<CCoup> nextCoups = (*itPlateau)->getNextCoups(0/*rand() % DIFFRENT_COUP*/);
 				std::list<CCoup>::iterator itCoup;
 				
 				for(itCoup=nextCoups.begin();itCoup!=nextCoups.end();itCoup++) {
-                    if(nbTest < MAX_TEST) {
+                    if(nbTest < MAX_TEST && !(*itCoup).isNull()) {
                         CPlateau *plateau = new CPlateau(*(*itPlateau), *itCoup);
                         
                         if(addPlateauIfNotExistst(newPlateaux, plateau)) {
@@ -124,7 +126,9 @@ void CSolver::process(void) {
         plateau->printVide();
         
         for(itCoup=coups.begin();itCoup!=coups.end();itCoup++) {
-            (*itCoup).print();
+			if(!(*itCoup).isNull()) {
+				(*itCoup).print();
+			}
         }        
     }
 }

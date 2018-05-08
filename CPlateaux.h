@@ -7,6 +7,7 @@
 class CPlateaux {
 private:
     std::list<CPlateau *> list;
+	//CPlateau * find(CPlateau *, std::list<CPlateau *>::iterator first, std::list<CPlateau *>::iterator end);
 public:
     ~CPlateaux(void);
     bool add(CPlateau *);

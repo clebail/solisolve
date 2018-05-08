@@ -2,17 +2,24 @@
 #include <ncurses.h>
 #include "CPlateau.h"
 
+typedef CCoup (*ptrFctCoup)(unsigned char *, int, int, int);
+
 static unsigned modele[NB_BILLE] = {
-	 0,  0,   0,   1,   16,   1,   0,  0,  0,
-	 0,  0,   2,   4,   32,   4,   2,  0,  0, 
-	 0,  2,  64,   8,  128,   8,  64,  2,  0,
-	 1,  4,   8, 256,  512, 256,   8,  4,  1,
-	16, 32, 128, 512, 1024, 512, 128, 32, 16,
-	 1,  4,   8, 256,  512, 256,   8,  4,  1,
-	 0,  2,  64,   8,  128,   8,  64,  2,  0,
-	 0,  0,   2,   4,   32,   4,   2,  0,  0, 
-	 0,  0,   0,   1,   16,   1,   0,  0,  0
+	0,  0,  1,   4,  1,  0, 0,
+	0,  8,  2,  16,  2,  8, 0,   
+	1,  2, 32,  64, 32,  2, 1,
+	4, 16, 64, 128, 64, 16, 4,
+	1,  2, 32,  64, 32,  2, 1,
+	0,  8,  2,  16,  2,  8, 0,  
+	0,  0,  1,   4,  1,  0, 0,
 };
+
+static CCoup haut(unsigned char *plateau, int x, int y, int idx);
+static CCoup droite(unsigned char *plateau, int x, int y, int idx);
+static CCoup bas(unsigned char *plateau, int x, int y, int idx);
+static CCoup gauche(unsigned char *plateau, int x, int y, int idx);
+
+static ptrFctCoup fctCoup[DIFFRENT_COUP] { haut, droite, bas, gauche };
 
 void CPlateau::mirror(unsigned char *pl) {
 	int x, y, idx, idxOther;
@@ -166,55 +173,42 @@ void CPlateau::print(int offsetX, int offsetY, unsigned char *pl) {
 }
 
 bool CPlateau::equal(CPlateau *other) {
-    /*int i, j;
-    unsigned char test[NB_BILLE];
-    
-    memcpy(test, plateau, NB_BILLE * sizeof(unsigned char));
+	if(poids == other->poids) {
+		int i, j;
+		unsigned char test[NB_BILLE];
+		
+		memcpy(test, plateau, NB_BILLE * sizeof(unsigned char));
 
-    for(i=0;i<2;i++) {
-        for(j=0;j<4;j++) {
-            if(memcmp(test, other->plateau, NB_BILLE * sizeof(unsigned char)) == 0) {
-                return true;
-            }
-            
-            rotate(test);
-        }
-        
-        mirror(test);
-    }
+		for(i=0;i<2;i++) {
+			for(j=0;j<4;j++) {
+				if(memcmp(test, other->plateau, NB_BILLE * sizeof(unsigned char)) == 0) {
+					return true;
+				}
+				
+				rotate(test);
+			}
+			
+			mirror(test);
+		}	
+	}
 	
-	return false;*/
-    return poids == other->poids;
+	return false;
 }
 
 bool CPlateau::inf(CPlateau *other) {
+	return false;
 }
 
 std::list<CCoup> CPlateau::getNextCoups(int numCoup) {
 	std::list<CCoup> coups;
-	int x, y, idx;
+	int x, y, idx, nbCoup;
 	
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
 			if(plateau[idx] == BILLE) {
-				if(y < NB_LIGNE - 2 && plateau[idx + NB_COLONNE] == VIDE && plateau[idx + NB_COLONNE * 2] == VIDE) { //Haut
-					CCoup coup(CCoup::etcHaut, idx + NB_COLONNE * 2);
-					coups.push_back(coup);
-				} 
-				
-				if(x >= 2  && plateau[idx - 1] == VIDE && plateau[idx - 2] == VIDE) { //Droite
-					CCoup coup(CCoup::etcDroite, idx - 2);
-					coups.push_back(coup);
-				} 
-				
-				if(y >= 2 && plateau[idx - NB_COLONNE] == VIDE && plateau[idx - NB_COLONNE * 2] == VIDE) { //Bas
-					CCoup coup(CCoup::etcBas, idx - NB_COLONNE * 2);
-					coups.push_back(coup);
-				} 
-				
-				if(x > NB_COLONNE - 2  && plateau[idx + 1] == VIDE && plateau[idx + 2] == VIDE) { //Gauche
-					CCoup coup(CCoup::etcGauche, idx + 2);
-					coups.push_back(coup);
+				for(nbCoup=0;nbCoup<DIFFRENT_COUP;nbCoup++) {
+					coups.push_back(fctCoup[numCoup](plateau, x, y, idx));
+					numCoup = (numCoup + 1) % DIFFRENT_COUP;
 				}
 			}
 		}
@@ -242,7 +236,7 @@ void CPlateau::printVide(void) {
 
 void CPlateau::testModele(int nbBille) {
     int *idxBille = new int[nbBille];
-    int x, y, idx, ib;
+    int ib;
     
     memset(idxBille, 255, nbBille * sizeof(int));
     
@@ -266,4 +260,36 @@ void CPlateau::testModele(int nbBille) {
     }
     
     delete[] idxBille;
+}
+
+CCoup haut(unsigned char *plateau, int x, int y, int idx) {
+	if(y < NB_LIGNE - 2 && plateau[idx + NB_COLONNE] == VIDE && plateau[idx + NB_COLONNE * 2] == VIDE) {
+		return CCoup(CCoup::etcHaut, idx + NB_COLONNE * 2);
+	} 
+	
+	return CCoup();
+}
+
+CCoup droite(unsigned char *plateau,int x, int y, int idx) {
+	if(x >= 2  && plateau[idx - 1] == VIDE && plateau[idx - 2] == VIDE) { //Droite
+		return CCoup(CCoup::etcDroite, idx - 2);
+	}
+	
+	return CCoup();
+}
+
+CCoup bas(unsigned char *plateau, int x, int y, int idx) {
+	if(y >= 2 && plateau[idx - NB_COLONNE] == VIDE && plateau[idx - NB_COLONNE * 2] == VIDE) { //Bas
+		return CCoup(CCoup::etcBas, idx - NB_COLONNE * 2);
+	}
+	
+	return CCoup();
+}
+
+CCoup gauche(unsigned char *plateau, int x, int y, int idx) {
+	if(x < NB_COLONNE - 2  && plateau[idx + 1] == VIDE && plateau[idx + 2] == VIDE) { //Gauche
+		return CCoup(CCoup::etcGauche, idx + 2);
+	}
+	
+	return CCoup();
 }

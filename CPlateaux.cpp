@@ -1,6 +1,25 @@
 #include <algorithm>
 #include "CPlateaux.h"
 
+/*CPlateau * CPlateaux::find(CPlateau *plateau, std::list<CPlateau *>::iterator first, std::list<CPlateau *>::iterator end) {
+	std::list<CPlateau *>::iterator milieu;
+	
+	if(first == end) {
+		return 0;
+	}
+	
+	milieu = (end - first) / 2;
+	if((*milieu)->equal(plateau)) {
+		std::list<CPlateau *>::iterator p = milieu;
+		while((*(--p))->equal(plateau)) {
+			milieu = p;
+		}
+		return *milieu;
+	}
+	
+	return 0;
+}*/
+
 CPlateaux::~CPlateaux(void){
     std::list<CPlateau *>::iterator i;
     
