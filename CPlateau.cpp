@@ -62,15 +62,42 @@ void CPlateau::swap(unsigned char *c1, unsigned char *c2) {
 }
 
 void CPlateau::calculPoids(void) {
+    int i, j;
+    unsigned char test[NB_BILLE];
+    unsigned minPoids = getPoids(plateau);
+    
+    memcpy(test, plateau, NB_BILLE * sizeof(unsigned char));
+    
+    for(i=0;i<2;i++) {
+        for(j=0;j<4;j++) {
+            unsigned testPoids = getPoids(test);
+            
+            if(testPoids < minPoids) {
+                minPoids = testPoids;
+            }
+            
+            rotate(test);
+        }
+        
+        mirror(test);
+    }
+    
+    poids = minPoids;
+}
+
+unsigned CPlateau::getPoids(unsigned char *plateau) {
     int x, y, idx;
     
-    poids = 0;
+    unsigned result = 0;
     
     for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
-            poids += modele[idx] * plateau[idx];
+            result <<= 1;
+            result += (plateau[idx] == BILLE ? 1 : 0);
         }
     }
+    
+    return result;
 }
 
 int CPlateau::getNextIdx(int idx) {

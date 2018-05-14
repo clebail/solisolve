@@ -24,6 +24,7 @@ private:
 	void rotate(unsigned char *pl = 0);
 	void swap(unsigned char *c1, unsigned char *c2);
     void calculPoids(void);
+    unsigned getPoids(unsigned char *plateau);
     static int getNextIdx(int idx);
 public:
 	CPlateau(unsigned char * modele, int idx);
