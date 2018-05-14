@@ -1,61 +1,96 @@
 #include <algorithm>
 #include "CPlateaux.h"
+#include "common.h"
 
-/*CPlateau * CPlateaux::find(CPlateau *plateau, std::list<CPlateau *>::iterator first, std::list<CPlateau *>::iterator end) {
-	std::list<CPlateau *>::iterator milieu;
+bool CPlateaux::find(CPlateau *plateau, int debut, int fin, int &idx) {
+	int milieu;
 	
-	if(first == end) {
-		return 0;
+	milieu = (fin + debut) / 2;
+
+	dout << "milieu: " << milieu << " debut: " << debut << " fin: " << fin << std::endl;
+	
+	if(size == 0 || debut > fin) {
+		idx = debut;
+		
+		return false;
 	}
 	
-	milieu = (end - first) / 2;
-	if((*milieu)->equal(plateau)) {
-		std::list<CPlateau *>::iterator p = milieu;
-		while((*(--p))->equal(plateau)) {
+	dout << "poids milieu: " << plx[milieu]->getPoids() << " poids autre: " << plateau->getPoids() << std::endl;
+	if(plx[milieu]->getPoids() == plateau->getPoids()) {
+		int p = milieu;
+		while(p >= 0 && plx[p]->getPoids() == plateau->getPoids()) {
 			milieu = p;
+			p--;
 		}
-		return *milieu;
+		
+		idx = milieu;
+		
+		return true;
+	}else if(plateau->getPoids() < plx[milieu]->getPoids()) {
+		return find(plateau, debut, milieu-1, idx);
+	} else {
+		return find(plateau, milieu+1, fin, idx);
 	}
+}
+
+void CPlateaux::clear(void) {
+	int i;
 	
-	return 0;
-}*/
+	for(i=0;i<size;i++) {
+		delete plx[i];
+	}
+}
+
+CPlateaux::CPlateaux(void) {
+	plx = 0;
+	size = 0;
+}
 
 CPlateaux::~CPlateaux(void){
-    std::list<CPlateau *>::iterator i;
-    
-    for(i=list.begin();i!=list.end();i++) {
-        CPlateau *p = *i;
-        
-        delete p;
-    }
-    
-    list.clear();
+    clear();
+	
+	delete plx;
+	
+	plx = 0;
+	size = 0;
 }
 
 bool CPlateaux::add(CPlateau *plateau) {
-    std::list<CPlateau *>::iterator it;
-    
-    for(it=list.begin();it!=list.end();it++) {
-        CPlateau *p = *it;
-        
-        if(p->equal(plateau)) {
-            return false;
-        }
-    }
-    
-    list.push_back(plateau);
-    
-    return true;
+    CPlateau **newPlx;
+	int idx, i, newI;
+	
+	if(find(plateau, 0, size-1, idx)) {
+		dout << "Plateaux de même poids " << plateau->getPoids() << std::endl;
+		i=idx;
+		while(i < size && plateau->getPoids() == plx[i]->getPoids()) {
+			if(plateau->equal(plx[i])) {
+				dout << "1 plateau équivalent trouvé" << std::endl;
+				return false;
+			}
+			i++;
+		}
+	}
+	
+	dout << "Ajout du plateau à l'index " << idx << std::endl;
+	newPlx = new CPlateau*[size+1];
+	newPlx[idx] = plateau;
+	for(i=newI=0;i<size;i++,newI++) {
+		if(i == idx) {
+			newI++;
+		}
+		newPlx[newI] = plx[i];
+	}
+	delete[] plx;
+	size++;
+	plx = newPlx;
+	
+	return true;
 }
 
-std::list<CPlateau *>::iterator CPlateaux::begin(void) {
-    return list.begin();
+int CPlateaux::getSize(void) {
+    return size;
 }
 
-std::list<CPlateau *>::iterator CPlateaux::end(void) {
-    return list.end();
-}
-
-unsigned long CPlateaux::size(void) {
-    return list.size();
+CPlateau * CPlateaux::get(int idx) {
+	return plx[idx];
 }

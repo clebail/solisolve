@@ -27,7 +27,7 @@ private:
     static int getNextIdx(int idx);
 public:
 	CPlateau(unsigned char * modele, int idx);
-	CPlateau(const CPlateau& other, CCoup coup);
+	CPlateau(CPlateau * other, CCoup coup);
 	~CPlateau(void);
 	void print(int offsetX = 0, int offsetY = 0, unsigned char *pl = 0);
 	bool equal(CPlateau *other);
@@ -35,6 +35,7 @@ public:
 	std::list<CCoup> getNextCoups(int numCoup);
     std::list<CCoup> getCoups(void);
     void printVide(void);
+	unsigned getPoids();
     static void testModele(int nbBille);
 };
 

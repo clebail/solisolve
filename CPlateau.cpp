@@ -1,6 +1,7 @@
 #include <string.h>
 #include <ncurses.h>
 #include "CPlateau.h"
+#include "common.h"
 
 typedef CCoup (*ptrFctCoup)(unsigned char *, int, int, int);
 
@@ -97,11 +98,11 @@ CPlateau::CPlateau(unsigned char *modele, int idx) {
     calculPoids();
 }
 
-CPlateau::CPlateau(const CPlateau& other, CCoup coup) {
+CPlateau::CPlateau(CPlateau * other, CCoup coup) {
 	int depuis = coup.getDepuis();
 	CCoup::ETypeCoup type = coup.getType();
 	
-	memcpy(plateau, other.plateau, NB_BILLE * sizeof(unsigned char));
+	memcpy(plateau, other->plateau, NB_BILLE * sizeof(unsigned char));
 	
 	plateau[depuis] = BILLE;
 	switch(type) {
@@ -124,7 +125,7 @@ CPlateau::CPlateau(const CPlateau& other, CCoup coup) {
 	}
 	
 	coups.push_back(coup);
-	coups.insert(coups.end(), other.coups.begin(), other.coups.end());
+	coups.insert(coups.end(), other->coups.begin(), other->coups.end());
     
     calculPoids();
 }
@@ -232,6 +233,10 @@ void CPlateau::printVide(void) {
             }
         }
     }
+}
+
+unsigned CPlateau::getPoids() {
+	return poids;
 }
 
 void CPlateau::testModele(int nbBille) {

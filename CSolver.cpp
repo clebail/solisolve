@@ -3,8 +3,9 @@
 #include <time.h>
 #include <iostream>
 #include "CSolver.h"
+#include "common.h"
 
-#define MAX_TEST      40000
+#define MAX_TEST      60000
 
 static unsigned char modele[NB_BILLE] = {
 	255, 255, 0, 0, 0, 255, 255, 
@@ -26,6 +27,7 @@ void CSolver::init(void) {
 			if(modele[idx] == VIDE) {
 				CPlateau *plateau = new CPlateau(modele, idx);
 				
+				dout << "Ajout du plateau " << idx << " poids" << plateau->getPoids() << std::endl;
 				if(addPlateauIfNotExistst(plateaux, plateau)) {
 					if(++nbTest == MAX_TEST) {
                         return;
@@ -35,12 +37,12 @@ void CSolver::init(void) {
 		}
 	}
 	
-	std::list<CPlateau *>::iterator it;
-    int nb=0;
+	int i;
+	int nb=0;
     x=y=0;
     initscr();
-    for(it=plateaux->begin();it!=plateaux->end();it++) {
-        (*it)->print(x, y);
+    for(i=0;i<plateaux->getSize();i++) {
+        plateaux->get(i)->print(x, y);
         
         if(nb < 10) {
             nb++;
@@ -77,7 +79,7 @@ CSolver::~CSolver(void) {
 }
 
 int CSolver::getNbPlateaux(void) {
-	return plateaux->size();
+	return plateaux->getSize();
 }
 
 void CSolver::process(void) {
@@ -87,23 +89,23 @@ void CSolver::process(void) {
 	init();
 	
 	while(!fini) {
-		printf("Nombre de bille: %d , nombre de plateau : %lu\n", nbBille, plateaux->size());
+		printf("Nombre de bille: %d , nombre de plateau : %d\n", nbBille, plateaux->getSize());
 		
 		nbBille++;
 		fini = nbBille == MAX_BILLE;
 		if(!fini) {
-			std::list<CPlateau *>::iterator itPlateau;
+			int i;
 			CPlateaux *newPlateaux = new CPlateaux();
             int nbTest = 0;
 			clear();
 			
-			for(itPlateau=plateaux->begin();itPlateau!=plateaux->end();itPlateau++) {
-				std::list<CCoup> nextCoups = (*itPlateau)->getNextCoups(0/*rand() % DIFFRENT_COUP*/);
+			for(i=0;i<plateaux->getSize();i++) {
+				std::list<CCoup> nextCoups = plateaux->get(i)->getNextCoups(0/*rand() % DIFFRENT_COUP*/);
 				std::list<CCoup>::iterator itCoup;
 				
 				for(itCoup=nextCoups.begin();itCoup!=nextCoups.end();itCoup++) {
                     if(nbTest < MAX_TEST && !(*itCoup).isNull()) {
-                        CPlateau *plateau = new CPlateau(*(*itPlateau), *itCoup);
+                        CPlateau *plateau = new CPlateau(plateaux->get(i), *itCoup);
                         
                         if(addPlateauIfNotExistst(newPlateaux, plateau)) {
                             nbTest++;
@@ -117,9 +119,8 @@ void CSolver::process(void) {
 		}
 	}
 	
-	if(plateaux->size() >= 1) {
-        std::list<CPlateau *>::iterator itPlateau = plateaux->begin();
-        CPlateau *plateau = *itPlateau;
+	if(plateaux->getSize() >= 1) {
+        CPlateau *plateau = plateaux->get(0);
         std::list<CCoup> coups = plateau->getCoups();
         std::list<CCoup>::iterator itCoup;
         

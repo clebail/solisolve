@@ -6,14 +6,17 @@
 
 class CPlateaux {
 private:
-    std::list<CPlateau *> list;
-	//CPlateau * find(CPlateau *, std::list<CPlateau *>::iterator first, std::list<CPlateau *>::iterator end);
+	CPlateau **plx;
+	int size;
+	
+	bool find(CPlateau *plateau, int debut, int fin, int& idx);
+	void clear(void);
 public:
-    ~CPlateaux(void);
-    bool add(CPlateau *);
-    std::list<CPlateau *>::iterator begin(void);
-    std::list<CPlateau *>::iterator end(void);
-    unsigned long size(void);
+	CPlateaux(void);
+	~CPlateaux(void);
+	bool add(CPlateau *);
+	int getSize(void);
+	CPlateau * get(int idx);
 };
 
 #endif // __CPlateaux__
