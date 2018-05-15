@@ -27,7 +27,7 @@ void CSolver::init(void) {
 			if(modele[idx] == VIDE) {
 				CPlateau *plateau = new CPlateau(modele, idx);
 				
-				dout << "Ajout du plateau " << idx << " poids" << plateau->getPoids() << std::endl;
+				dout << "Ajout du plateau " << idx << " poids " << plateau->getPoids() << std::endl;
 				if(addPlateauIfNotExistst(plateaux, plateau)) {
 					if(++nbTest == MAX_TEST) {
                         return;
@@ -37,7 +37,7 @@ void CSolver::init(void) {
 		}
 	}
 	
-	std::set<CPlateau *, SPlateauCmp>::iterator it;
+	/*std::set<CPlateau *, SPlateauCmp>::iterator it;
 	int nb=0;
     x=y=0;
     initscr();
@@ -54,7 +54,7 @@ void CSolver::init(void) {
     }
     refresh();
     getch();
-    endwin();
+    endwin();*/
 }
 
 bool CSolver::addPlateauIfNotExistst(CPlateaux *plx, CPlateau *plateau) {
@@ -89,7 +89,7 @@ void CSolver::process(void) {
 	init();
 	
 	while(!fini) {
-		printf("Nombre de bille: %2d , nombre de plateau : %10lu\n", nbBille, plateaux->size());
+		dout << "Nombre de bille: " << nbBille << ", nombre de plateau: " << plateaux->size() << std::endl;
 		
 		nbBille++;
 		fini = nbBille == MAX_BILLE;

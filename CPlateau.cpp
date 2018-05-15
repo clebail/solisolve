@@ -200,7 +200,7 @@ void CPlateau::printVide(void) {
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {
             if(plateau[idx] == VIDE) {
-                printf("Départ: %c,%d\n", x + 'A', y + 1);
+                printf("D %c,%d 0\n", x + 'A', y + 1);
                 return;
             }
         }

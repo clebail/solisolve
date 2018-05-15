@@ -5,7 +5,5 @@ int main(void) {
 	
 	solver.process();
     
-    //CPlateau::testModele(2);
-	
     return 0;
 }
