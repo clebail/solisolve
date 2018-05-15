@@ -4,11 +4,9 @@
 #include "CPlateau.h"
 
 struct SPlateauCmp {
-	bool operator() (CPlateau *p) {
-		return (*toFind) == (*p);
+	bool operator() (CPlateau *p1, CPlateau *p2) {
+		return p1->getPoids() < p2->getPoids();
 	}
-	
-	CPlateau *toFind;
 };
 
 #endif //__SPlateauCmp__

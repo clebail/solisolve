@@ -18,26 +18,22 @@ class CPlateau {
 private:
 	unsigned char plateau[NB_BILLE];
 	std::list<CCoup> coups;
-    unsigned poids;
+    unsigned long poids;
 	
 	void mirror(unsigned char *pl = 0);
 	void rotate(unsigned char *pl = 0);
 	void swap(unsigned char *c1, unsigned char *c2);
     void calculPoids(void);
-    unsigned getPoids(unsigned char *plateau);
-    static int getNextIdx(int idx);
+    unsigned long poidsFoPlx(unsigned char *plateau);
 public:
 	CPlateau(unsigned char * modele, int idx);
 	CPlateau(CPlateau * other, CCoup coup);
 	~CPlateau(void);
 	void print(int offsetX = 0, int offsetY = 0, unsigned char *pl = 0);
-	bool equal(CPlateau *other);
-    bool inf(CPlateau *other);
 	std::list<CCoup> getNextCoups(int numCoup);
     std::list<CCoup> getCoups(void);
     void printVide(void);
-	unsigned getPoids();
-    static void testModele(int nbBille);
+	unsigned long getPoids();
 };
 
 #endif //__CPlateau__
