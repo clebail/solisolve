@@ -5,7 +5,7 @@
 #include "CSolver.h"
 #include "common.h"
 
-#define MAX_TEST	500
+#define MAX_TEST	5000
 
 static unsigned char modele[NB_BILLE] = {
 	255, 255, 0, 0, 0, 255, 255, 
