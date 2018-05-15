@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>Svg anim</title> 
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="test.js"></script>
+		<script>
+			$(document).ready(function() {
+				var a = document.getElementById("testsvg");
+				
+				a.addEventListener("load",function(){
+					var svgDoc = a.contentDocument;
+					var svgRoot  = svgDoc.documentElement;
+					
+					doAnimation(seq, svgRoot, 0);
+				},false);
+			});
+			
+			function doAnimation(seq, svgRoot, step) {
+				if(step < seq.length) {
+					var elt = $(seq[step].id, svgRoot);
+					var props = {};
+					
+					props[seq[step].property] = seq[step].value;
+					
+					elt.remove().appendTo(svgRoot);
+					elt.animate(props, { 
+						duration: seq[step].duration, complete: function() {
+							doAnimation(seq, svgRoot, ++step);
+						}
+					});
+				} else {
+					setTimeout(reload(), 1000);
+				}
+			}
+			
+			function reload() {
+				$("object").remove().appendTo($("body"));
+			}
+		</script>
+    </head>
+    <body>
+        <object data="anim.svg" type="image/svg+xml" id="svg"></object>
+    </body>
+</html>
