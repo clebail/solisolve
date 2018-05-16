@@ -8,9 +8,9 @@
 
 #define MAX_LINE			256
 #define CASE_HEIGHT			50
-#define MARGIN_HEIGHT		10
+#define MARGIN_HEIGHT		35
 #define CASE_WIDTH			50
-#define MARGIN_WIDTH		10
+#define MARGIN_WIDTH		35
 
 typedef struct _SId {
 	char x;
@@ -48,76 +48,78 @@ int main(int argc, char *argv[]) {
 	fr = fopen(argv[1], "r");
 	if(fr != 0) {
 		char line[MAX_LINE];
-		SCommand commande;
 		SId plateau[NB_BILLE];
 		std::list<std::string> result;
 		std::list<std::string>::iterator it;
 		
 		while(!feof(fr)) {
 			fgets(line, MAX_LINE, fr);
-			
-			sscanf(line, "%c %c,%d %d", &commande.cmd, &commande.id.x, &commande.id.y, (int *)&commande.type);
-			
-			if(commande.cmd == 'D') {
-				std::stringstream ss;
+			if(!feof(fr)) {
+				SCommand commande;
 				
-				ss << "\t{ property: 'opacity', value: '0', id: '#circle" << commande.id.x << commande.id.y << "', duration: 200 }," << std::endl;
+				sscanf(line, "%c %c,%d %d", &commande.cmd, &commande.id.x, &commande.id.y, (int *)&commande.type);
 				
-				initPlateau(plateau, &commande.id);
-				result.push_back(ss.str());
-			}else {
-				std::stringstream ss;
-				SId *id = &plateau[getIdx(commande.id.x, commande.id.y)];
-				SId *idDest;
-				SId *idOther;
-				
-				switch(commande.type) {
-					case CCoup::etcHaut:
-						idOther = &plateau[getIdx(commande.id.x, commande.id.y - 1)];
-						idDest = &plateau[getIdx(commande.id.x, commande.id.y - 2)];
-						
-						ss << "\t{ property: 'cy', value: '" << ((commande.id.y - 3) * CASE_HEIGHT + MARGIN_HEIGHT);
-						ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
-						
-						break;
-					case CCoup::etcDroite:
-						idOther = &plateau[getIdx(commande.id.x + 1, commande.id.y)];
-						idDest = &plateau[getIdx(commande.id.x + 2, commande.id.y)];
-						
-						ss << "\t{ property: 'cx', value: '" << ((commande.id.x - 'A' + 2) * CASE_WIDTH + MARGIN_WIDTH);
-						ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
-						
-						break;
-					case CCoup::etcBas:
-						idOther = &plateau[getIdx(commande.id.x, commande.id.y + 1)];
-						idDest = &plateau[getIdx(commande.id.x, commande.id.y + 2)];
-						
-						ss << "\t{ property: 'cy', value: '" << ((commande.id.y + 1) * CASE_HEIGHT + MARGIN_HEIGHT);
-						ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
-						
-						break;
-					case CCoup::etcGauche:
-						idOther = &plateau[getIdx(commande.id.x - 1, commande.id.y)];
-						idDest = &plateau[getIdx(commande.id.x - 2, commande.id.y)];
-						
-						ss << "\t{ property: 'cx', value: '" << ((commande.id.x - 'A' - 2) * CASE_WIDTH + MARGIN_WIDTH);
-						ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
-						
-						break;
-				}
-				
-				ss << "\t{ property: 'opacity', value: '0', id: '#circle" << idOther->x << idOther->y << "', duration: 200 }," << std::endl;
-				
-				idOther->x = 0;
-				idOther->y = 0;
-				
-				idDest->x = id->x;
-				idDest->y = id->y;
-				
-				id->x = 0;
-				id->y = 0;
+				if(commande.cmd == 'D') {
+					std::stringstream ss;
 					
-				result.push_back(ss.str());
+					ss << "\t{ property: 'opacity', value: '0', id: '#circle" << commande.id.x << commande.id.y << "', duration: 200 }," << std::endl;
+					
+					initPlateau(plateau, &commande.id);
+					result.push_back(ss.str());
+				}else if(commande.cmd == 'M') {
+					std::stringstream ss;
+					SId *id = &plateau[getIdx(commande.id.x, commande.id.y)];
+					SId *idDest;
+					SId *idOther;
+					
+					switch(commande.type) {
+						case CCoup::etcHaut:
+							idOther = &plateau[getIdx(commande.id.x, commande.id.y - 1)];
+							idDest = &plateau[getIdx(commande.id.x, commande.id.y - 2)];
+							
+							ss << "\t{ property: 'cy', value: '" << ((commande.id.y - 3) * CASE_HEIGHT + MARGIN_HEIGHT);
+							ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
+							
+							break;
+						case CCoup::etcDroite:
+							idOther = &plateau[getIdx(commande.id.x + 1, commande.id.y)];
+							idDest = &plateau[getIdx(commande.id.x + 2, commande.id.y)];
+							
+							ss << "\t{ property: 'cx', value: '" << ((commande.id.x - 'A' + 2) * CASE_WIDTH + MARGIN_WIDTH);
+							ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
+							
+							break;
+						case CCoup::etcBas:
+							idOther = &plateau[getIdx(commande.id.x, commande.id.y + 1)];
+							idDest = &plateau[getIdx(commande.id.x, commande.id.y + 2)];
+							
+							ss << "\t{ property: 'cy', value: '" << ((commande.id.y + 1) * CASE_HEIGHT + MARGIN_HEIGHT);
+							ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
+							
+							break;
+						case CCoup::etcGauche:
+							idOther = &plateau[getIdx(commande.id.x - 1, commande.id.y)];
+							idDest = &plateau[getIdx(commande.id.x - 2, commande.id.y)];
+							
+							ss << "\t{ property: 'cx', value: '" << ((commande.id.x - 'A' - 2) * CASE_WIDTH + MARGIN_WIDTH);
+							ss << "px', id: '#circle" << id->x << id->y << "', duration: 1000 }," << std::endl;
+							
+							break;
+					}
+					
+					ss << "\t{ property: 'opacity', value: '0', id: '#circle" << idOther->x << idOther->y << "', duration: 200 }," << std::endl;
+					
+					idOther->x = 0;
+					idOther->y = 0;
+					
+					idDest->x = id->x;
+					idDest->y = id->y;
+					
+					id->x = 0;
+					id->y = 0;
+						
+					result.push_back(ss.str());
+				}
 			}
 		}
 		

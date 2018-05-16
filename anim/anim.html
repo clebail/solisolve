@@ -23,8 +23,10 @@
 					props[seq[step].property] = seq[step].value;
 					
 					elt.remove().appendTo(svgRoot);
+					elt.attr("fill", "#E57373");
 					elt.animate(props, { 
 						duration: seq[step].duration, complete: function() {
+							elt.attr("fill", "#b39ddb");
 							doAnimation(seq, svgRoot, ++step);
 						}
 					});
@@ -33,8 +35,9 @@
 				}
 			}
 			
-			function reload() {
+			function reload(seq, svgRoot) {
 				$("object").remove().appendTo($("body"));
+				doAnimation(seq, svgRoot, 0);
 			}
 		</script>
     </head>
