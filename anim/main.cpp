@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 				if(commande.cmd == 'D') {
 					std::stringstream ss;
 					
-					ss << "\t{ property: 'opacity', value: '0', id: '#circle" << commande.id.x << commande.id.y << "', duration: 200 }," << std::endl;
+					ss << "\t{ property: 'opacity', value: '0', id: '#circle" << commande.id.x << commande.id.y << "', duration: 1000 }," << std::endl;
 					
 					initPlateau(plateau, &commande.id);
 					result.push_back(ss.str());
