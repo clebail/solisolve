@@ -23,18 +23,21 @@
 					props[seq[step].property] = seq[step].value;
 					
 					elt.remove().appendTo(svgRoot);
+					if(seq[step].property != "opacity") {
+						elt.attr("fill", "#E57373");
+					}
 					elt.animate(props, { 
 						duration: seq[step].duration, complete: function() {
+							elt.attr("fill", "#b39ddb");
 							doAnimation(seq, svgRoot, ++step);
 						}
 					});
 				} else {
-					setTimeout(reload(), 1000);
+					setTimeout(function() {
+						$("object").remove().appendTo($("body"));
+						doAnimation(seq, svgRoot, 0);
+					}, 10000);
 				}
-			}
-			
-			function reload() {
-				$("object").remove().appendTo($("body"));
 			}
 		</script>
     </head>
