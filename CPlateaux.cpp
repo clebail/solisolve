@@ -19,7 +19,21 @@ int CPlateaux::getScore(void) {
 }
 
 void CPlateaux::calculScore(void) {
+	int i;
+	int first = false;
+	
 	score = 0;
+	for(i=0;i<NB_BILLE-2;i++) {
+		if(plateaux[i+1].isNext(&plateaux[i])) {
+			if(!first) {
+				first = true;
+				score += i;
+			}
+			score += i+1;
+		} else {
+			first = false;
+		}
+	}
 }
 
 void CPlateaux::mute(int idxGene) {

@@ -1,6 +1,7 @@
 #ifndef __CPlateau__
 #define __CPlateau__
 
+#include <set>
 #include "CGene.h"
 
 #define NB_COLONNE			7
@@ -16,10 +17,12 @@ class CPlateau : public CGene {
 private:
 	unsigned char plateau[NB_BILLE];
 	int nbTrou;
+	std::set<int> trous;
 public:
 	void init(int nbTrou);
 	int getNbTrou(void);
 	void from(CPlateau * other);
+	bool isNext(CPlateau * other);
 };
 
 #endif //__CPlateau__

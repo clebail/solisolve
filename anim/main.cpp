@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <CPlateau.h>
+#include <CCoup.h>
 
 #define MAX_LINE			256
 #define CASE_HEIGHT			50

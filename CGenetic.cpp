@@ -17,7 +17,7 @@ void CGenetic::triPopulation(void) {
 
 	for(i=TAILLE_POPULATION-1;i>=1;i--) {
 		for(j=0;j<=i-1;j++) {
-			if(population[j+1]->getScore() < population[j]->getScore()) {
+			if(CIndividuFactory::cmp(population[j+1]->getScore(), population[j]->getScore())) {
 				CIndividu *tmp = population[j+1];
 				
 				population[j+1] = population[j];

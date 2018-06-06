@@ -5,7 +5,7 @@
 
 class CIndividu {
 protected:
-	virtual CGene * getGene(int idx);
+	virtual CGene * getGene(int idx) = 0;
 public:
 	virtual ~CIndividu(void) {}
 	virtual void init(void) = 0;

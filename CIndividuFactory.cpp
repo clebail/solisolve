@@ -8,3 +8,7 @@ CIndividu * CIndividuFactory::createIndividu(void) {
 int CIndividuFactory::getTailleGenome(void) {
 	return MAX_BILLE-1;
 }
+
+int CIndividuFactory::cmp(int score1, int score2) {
+	return score2 < score1;
+}
