@@ -1,16 +1,21 @@
 #ifndef __CPlateaux__
 #define __CPlateaux__
 
-#include <set>
+#include "CIndividu.h"
 #include "CPlateau.h"
-#include "SPlateauCmp.h"
 
-class CPlateaux : public std::set<CPlateau *, SPlateauCmp> {
+class CPlateaux : public CIndividu {
 private:
-	void clear(void);
+	int score;
+	CPlateau plateaux[NB_BILLE-1];
+protected:
+	CGene * getGene(int idx);
 public:
-	~CPlateaux(void);
-	bool add(CPlateau *);
+	void init(void);
+	int getScore(void);
+	void calculScore(void);
+	void mute(int idxGene);
+	void from(CIndividu *i1, CIndividu *i2, int seuil);
 };
 
 #endif // __CPlateaux__

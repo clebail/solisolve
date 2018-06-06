@@ -1,7 +1,11 @@
 #ifndef __CINDIVIDU__
 #define __CINDIVIDU__
 
+#include "CGene.h"
+
 class CIndividu {
+protected:
+	virtual CGene * getGene(int idx);
 public:
 	virtual ~CIndividu(void) {}
 	virtual void init(void) = 0;

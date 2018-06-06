@@ -1,28 +1,40 @@
-#include <algorithm>
 #include "CPlateaux.h"
-#include "common.h"
 
-void CPlateaux::clear(void) {
-	std::set<CPlateau *, SPlateauCmp>::iterator it;
-	
-	for(it=begin();it!=end();it++) {
-		delete *it;
-	}
-	
-	std::set<CPlateau *, SPlateauCmp>::clear();
+CGene * CPlateaux::getGene(int idx) {
+	return &plateaux[idx];
 }
 
-CPlateaux::~CPlateaux(void){
-    clear();
-}
-
-bool CPlateaux::add(CPlateau *plateau) {
-	auto search = find(plateau);
+void CPlateaux::init(void) {
+	int i;
 	
-	if(search == end()) {
-		insert(plateau);
-		return true;
+	for(i = 0;i<NB_BILLE-1;i++) {
+		plateaux[i].init(i+1);
 	}
 	
-	return false;
+	calculScore();
+}
+
+int CPlateaux::getScore(void) {
+	return score;
+}
+
+void CPlateaux::calculScore(void) {
+	score = 0;
+}
+
+void CPlateaux::mute(int idxGene) {
+	plateaux[idxGene].init(plateaux[idxGene].getNbTrou());
+}
+
+void CPlateaux::from(CIndividu *i1, CIndividu *i2, int seuil) {
+	CPlateaux *source = static_cast<CPlateaux *>(i1);
+	int i;
+	
+	for(i=0;i<NB_BILLE-1;i++) {
+		if(i >= seuil) {
+			source = static_cast<CPlateaux *>(i2);
+		}
+		
+		plateaux[i].from(static_cast<CPlateau *>(source->getGene(i)));
+	}
 }

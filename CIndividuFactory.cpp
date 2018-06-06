@@ -1,9 +1,10 @@
 #include "CIndividuFactory.h"
+#include "CPlateaux.h"
 
 CIndividu * CIndividuFactory::createIndividu(void) {
-	return 0;
+	return new CPlateaux();
 }
 
 int CIndividuFactory::getTailleGenome(void) {
-	return 100;
+	return MAX_BILLE-1;
 }

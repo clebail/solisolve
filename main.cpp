@@ -1,9 +1,14 @@
-#include "CSolver.h"
+#include "CGenetic.h"
 
 int main(void) {
-	CSolver solver;
+	CGenetic genetic;
+	CIndividu *resultat = 0;
 	
-	solver.process();
+	resultat = genetic.process();
+	
+	if(resultat != 0) {
+		//todo
+	}
     
     return 0;
 }
