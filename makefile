@@ -10,7 +10,7 @@ $(TOPTARGETS): $(SUBDIRS)
 
 all: $(ALL)
 
-$(ALL): main.o CPlateau.o CSolver.o CCoup.o CPlateaux.o CGenetic.o
+$(ALL): main.o CPlateau.o CSolver.o CCoup.o CPlateaux.o CGenetic.o CIndividuFactory.o
 	$(CC) -o $@ $(LDFLAGS) $^
 	
 $(SUBDIRS):
