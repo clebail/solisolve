@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdlib.h>
 #include <time.h> 
 #include "CGenetic.h"
@@ -6,15 +7,18 @@
 void CGenetic::initPopulation(void) {
 	int i;
 
+	std::cout << "Score de la gagne " << CIndividuFactory::getBestScore() << std::endl;
+	
 	for(i=0;i<TAILLE_POPULATION;i++) {
 		population[i] = CIndividuFactory::createIndividu();
 		population[i]->init();
 	}
+
 }
 
 void CGenetic::triPopulation(void) {
 	int i, j;
-
+	
 	for(i=TAILLE_POPULATION-1;i>=1;i--) {
 		for(j=0;j<=i-1;j++) {
 			if(CIndividuFactory::cmp(population[j+1]->getScore(), population[j]->getScore())) {
@@ -40,7 +44,7 @@ bool CGenetic::croisePopuplation(void) {
 		croiseIndividus(i-1, i, ir, seuil);
 		croiseIndividus(i, i-1, ir-1, seuil);
 		
-		if(population[ir]->getScore() == 0 || population[ir-1]->getScore() == 0) {
+		if(population[ir]->getScore() == CIndividuFactory::getBestScore() || population[ir-1]->getScore() == CIndividuFactory::getBestScore()) {
 			return true;
 		}
 		
@@ -54,7 +58,7 @@ bool CGenetic::croisePopuplation(void) {
 void CGenetic::croiseIndividus(int i1, int i2, int ir, int seuil) {
 	population[ir]->from(population[i1], population[i2], seuil);
 	
-	if(rand() % 10 < 4) {
+	if(rand() % 10 < 7) {
 		population[ir]->mute(rand() % CIndividuFactory::getTailleGenome());
 	}
 	
@@ -73,6 +77,7 @@ CIndividu * CGenetic::process(void) {
 	do {
 		fini = croisePopuplation() | (++i == NOMBRE_GENERATION);
 		triPopulation();
+		std::cout << i << " " << population[0]->getScore() << std::endl;
 	}while(!fini);
 	
 	return population[0];

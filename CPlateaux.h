@@ -7,7 +7,7 @@
 class CPlateaux : public CIndividu {
 private:
 	int score;
-	CPlateau plateaux[NB_BILLE-1];
+	CPlateau plateaux[MAX_BILLE-1];
 protected:
 	CGene * getGene(int idx);
 public:

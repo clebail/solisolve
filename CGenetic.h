@@ -3,7 +3,7 @@
 
 #include "CIndividu.h"
 
-#define TAILLE_POPULATION					150
+#define TAILLE_POPULATION					100
 #define NOMBRE_GENERATION					1000
 
 class CGenetic {

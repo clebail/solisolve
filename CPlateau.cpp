@@ -22,7 +22,7 @@ void CPlateau::init(int nbTrou) {
 		
 		if(plateau[idx] == BILLE) {
 			plateau[idx] = VIDE;
-			trous.push_back(idx);
+			trous.insert(idx);
 			nb++;
 		}
 	}
@@ -37,12 +37,12 @@ int CPlateau::getNbTrou(void) {
 void CPlateau::from(CPlateau * other) {
 	memcpy(plateau, other->plateau, sizeof(unsigned char) * NB_BILLE);
 	trous.clear();
-	trous.insert(trous.begin(), other->trous.begin(), other->trous.end()); 
+	trous.insert(other->trous.begin(), other->trous.end()); 
 }
 
 bool CPlateau::isNext(CPlateau * other) {
 	std::set<int>::iterator itTrou;
-	int diff[2] = { -1, -1 };
+	int diff[2] = { -1, -1 };
 	int curDiff = 0;
 	
 	for(itTrou = trous.begin();itTrou != trous.end();itTrou++) {
@@ -57,16 +57,16 @@ bool CPlateau::isNext(CPlateau * other) {
 		return false;
 	}
 	
-	if(diff[0] != diff[1] - 1 && diff[0] != diff[1] - NC_COLONNE) {
+	if(diff[0] != diff[1] - 1 && diff[0] != diff[1] - NB_COLONNE) {
 		return false;
 	}
 	
 	if(diff[0] == diff[1] - 1) {
-		if((diff[0] % NC_COLONNE != 0 && other->trous.find(diff[0] - 1) != other->trous.end()) || (diff[1] % NC_COLONNE != NC_COLONNE - 1 && other->trous.find(diff[1] + 1) != other->trous.end())) {
+		if((diff[0] % NB_COLONNE != 0 && other->trous.find(diff[0] - 1) != other->trous.end()) || (diff[1] % NB_COLONNE != NB_COLONNE - 1 && other->trous.find(diff[1] + 1) != other->trous.end())) {
 			return true;
 		}
 	} else {
-		if((diff[0] / NC_COLONNE != 0 && other->trous.find(diff[0] - NC_COLONNE != other->trous.end()) || (diff[1] % NC_COLONNE != NC_COLONNE - 1 && other->trous.find(diff[1] + NC_COLONNE) != other->trous.end())) {
+		if((diff[0] / NB_COLONNE != 0 && other->trous.find(diff[0] - NB_COLONNE) != other->trous.end()) || (diff[1] % NB_COLONNE != NB_COLONNE - 1 && other->trous.find(diff[1] + NB_COLONNE) != other->trous.end())) {
 			return true;
 		}
 	}

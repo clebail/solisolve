@@ -7,7 +7,7 @@ CGene * CPlateaux::getGene(int idx) {
 void CPlateaux::init(void) {
 	int i;
 	
-	for(i = 0;i<NB_BILLE-1;i++) {
+	for(i = 0;i<MAX_BILLE-1;i++) {
 		plateaux[i].init(i+1);
 	}
 	
@@ -23,7 +23,7 @@ void CPlateaux::calculScore(void) {
 	int first = false;
 	
 	score = 0;
-	for(i=0;i<NB_BILLE-2;i++) {
+	for(i=0;i<MAX_BILLE-2;i++) {
 		if(plateaux[i+1].isNext(&plateaux[i])) {
 			if(!first) {
 				first = true;
@@ -44,7 +44,7 @@ void CPlateaux::from(CIndividu *i1, CIndividu *i2, int seuil) {
 	CPlateaux *source = static_cast<CPlateaux *>(i1);
 	int i;
 	
-	for(i=0;i<NB_BILLE-1;i++) {
+	for(i=0;i<MAX_BILLE-1;i++) {
 		if(i >= seuil) {
 			source = static_cast<CPlateaux *>(i2);
 		}
