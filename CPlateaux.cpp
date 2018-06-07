@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ncurses.h>
 #include "CPlateaux.h"
 
 void CPlateaux::getCoords(int idx, char& x, int& y) {
@@ -27,12 +28,17 @@ int CPlateaux::getScore(void) {
 void CPlateaux::calculScore(void) {
 	int i;
 	int first = false;
+	int ox, oy;
 	
 	coups.clear();
 	
+	initscr();
 	score = 0;
 	for(i=0;i<MAX_BILLE-2;i++) {
 		CCoup coup;
+		
+		move(51, i*2);
+		
 		if(plateaux[i+1].isNext(&plateaux[i], coup)) {
 			if(!first) {
 				first = true;
@@ -40,10 +46,32 @@ void CPlateaux::calculScore(void) {
 			}
 			score += i+1;
 			coups.push_back(coup);
+	
+			printw("1");
 		} else {
 			first = false;
+			
+			printw("0");
 		}
 	}
+	
+	
+	ox=oy=0;
+	for(i=0;i<MAX_BILLE-1;i++) {
+		plateaux[i].print(ox, oy);
+		
+		ox += 10;
+		if(ox >= 100) {
+			ox = 0;
+			oy += 10;
+		}
+	}
+	
+	move(52, 0);
+	printw("%d", score);
+	
+	getch();
+    endwin();
 }
 
 void CPlateaux::mute(int idxGene) {

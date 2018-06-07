@@ -25,6 +25,7 @@ public:
 	void from(CPlateau * other);
 	bool isNext(CPlateau * other, CCoup& coup);
 	const std::set<int> getTrous(void); 
+	void print(int offsetX, int offsetY, unsigned char *p = 0);
 };
 
 #endif //__CPlateau__
