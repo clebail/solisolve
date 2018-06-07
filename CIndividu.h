@@ -13,6 +13,7 @@ public:
 	virtual void calculScore(void) = 0;
 	virtual void mute(int idxGene) = 0;
 	virtual void from(CIndividu *i1, CIndividu *i2, int seuil) = 0;
+	virtual void print(void) = 0;
 };
 
 #endif //__CINDIVIDU__

@@ -3,6 +3,7 @@
 
 #include <set>
 #include "CGene.h"
+#include "CCoup.h"
 
 #define NB_COLONNE			7
 #define NB_LIGNE			7
@@ -22,7 +23,8 @@ public:
 	void init(int nbTrou);
 	int getNbTrou(void);
 	void from(CPlateau * other);
-	bool isNext(CPlateau * other);
+	bool isNext(CPlateau * other, CCoup& coup);
+	const std::set<int> getTrous(void); 
 };
 
 #endif //__CPlateau__
