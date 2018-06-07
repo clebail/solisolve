@@ -45,13 +45,16 @@ bool CPlateau::isNext(CPlateau * other, CCoup& coup) {
 	std::set<int>::iterator itTrou;
 	int diff[2] = { -1, -1 };
 	int curDiff = 0;
+	int i;
 	
-	for(itTrou = trous.begin();itTrou != trous.end();itTrou++) {
-		if(other->trous.find(*itTrou) != other->trous.end()) {
-			if(curDiff < 2) {
-				diff[curDiff++] = *itTrou;
+	for(i=0;i<NB_BILLE;i++) {
+		if(plateau[i] != other->plateau[i]) {
+			if(plateau[i] == VIDE && curDiff < 2) {
+				diff[curDiff] = i;
 			}
 		}
+		
+		curDiff++;
 	}
 	
 	if(curDiff != 2) {
@@ -65,21 +68,29 @@ bool CPlateau::isNext(CPlateau * other, CCoup& coup) {
 	if(diff[0] == diff[1] - 1) {
 		if(diff[0] % NB_COLONNE != 0 && other->trous.find(diff[0] - 1) != other->trous.end()) {
 			coup = CCoup(CCoup::etcGauche, diff[1]);
+			move(53, 0);
+			printw("gauche %d %d", diff[0], diff[1]); 
 			return true;
 		}
 		
 		if(diff[1] % NB_COLONNE != NB_COLONNE - 1 && other->trous.find(diff[1] + 1) != other->trous.end()) {
 			coup = CCoup(CCoup::etcDroite, diff[0]);
+			move(53, 20);
+			printw("droite %d %d", diff[0], diff[1]); 
 			return true;
 		}
 	} else {
 		if(diff[0] / NB_COLONNE != 0 && other->trous.find(diff[0] - NB_COLONNE) != other->trous.end()) {
-			coup = CCoup(CCoup::etcHaut, diff[1]);;
+			coup = CCoup(CCoup::etcHaut, diff[1]);
+			move(53, 40);
+			printw("haut %d %d", diff[0], diff[1]); 
 			return true;
 		}
 		
 		if(diff[1] % NB_COLONNE != NB_COLONNE - 1 && other->trous.find(diff[1] + NB_COLONNE) != other->trous.end()) {
 			coup = CCoup(CCoup::etcBas, diff[0]);
+			move(53, 60);
+			printw("bas %d %d", diff[0], diff[1]); 
 			return true;
 		}
 	}

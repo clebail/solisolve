@@ -77,7 +77,7 @@ CIndividu * CGenetic::process(void) {
 	do {
 		fini = croisePopuplation() | (++i == NOMBRE_GENERATION);
 		triPopulation();
-		population[0]->print();
+		//population[0]->print();
 		std::cout << " " << i << " " << population[0]->getScore() << std::endl;
 	}while(!fini);
 	
