@@ -145,7 +145,7 @@ void CPlateau::print(int offsetX, int offsetY, unsigned char *pl) {
 	attron(COLOR_PAIR(1));
     
     move(offsetY, offsetX);
-    printw("Poids: %u", poids);
+    printw("Poids: %lu", poids);
 	
 	for(y=idx=0;y<NB_LIGNE;y++) {
 		for(x=0;x<NB_COLONNE;x++,idx++) {

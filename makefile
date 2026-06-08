@@ -11,7 +11,7 @@ $(TOPTARGETS): $(SUBDIRS)
 all: $(ALL)
 
 $(ALL): main.o CPlateau.o CSolver.o CCoup.o CPlateaux.o
-	$(CC) -o $@ $(LDFLAGS) $^
+	$(CC) -o $@ $^ $(LDFLAGS)
 	
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
