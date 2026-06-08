@@ -4,7 +4,19 @@ Solveur du **jeu du solitaire** (peg solitaire) écrit en C++, avec rendu dans l
 
 ## Le jeu
 
-Le solitaire se joue sur un plateau en croix (forme anglaise) : une grille 7×7 dont on retire les quatre coins, soit **33 trous**. Au départ toutes les cases sont occupées par une bille sauf une, laissée vide.
+Le solitaire se joue ici sur le plateau **français (européen)** : une grille 7×7 dont on retire les quatre coins en escalier, ce qui donne des lignes de **3, 5, 7, 7, 7, 5, 3** cases, soit **37 trous**. Au départ toutes les cases sont occupées par une bille sauf une, laissée vide.
+
+```
+    o o o
+  o o o o o
+o o o o o o o
+o o o o o o o
+o o o o o o o
+  o o o o o
+    o o o
+```
+
+> À noter : contrairement au plateau anglais (33 trous), la partie *centrale* du plateau français n'a pas de solution (résultat mathématique connu). Le solveur explore donc tous les trous de départ possibles et retient un départ pour lequel une solution existe.
 
 Un coup consiste à faire **sauter une bille par-dessus une bille voisine** (haut, bas, gauche ou droite) pour atterrir dans le trou vide juste derrière : la bille sautée est retirée du plateau. Le but est d'enchaîner les sauts jusqu'à ne laisser qu'**une seule bille**.
 
