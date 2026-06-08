@@ -10,7 +10,7 @@ Un coup consiste à faire **sauter une bille par-dessus une bille voisine** (hau
 
 ## Aperçu de l'animation
 
-▶️ **[Voir l'animation de la solution](https://htmlpreview.github.io/?https://github.com/clebail/solisolve/blob/master/anim/anim.html)**
+▶️ **[Voir l'animation de la solution](https://clebail.github.io/solisolve/anim/anim.html)** *(hébergée via GitHub Pages)*
 
 > L'animation rejoue, saut après saut, une solution complète trouvée par le solveur. Elle tourne en boucle.
 
