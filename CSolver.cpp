@@ -70,8 +70,9 @@ void CSolver::clearPlateaux(void) {
 	
 }
 
-CSolver::CSolver(void) {
+CSolver::CSolver(bool visu) {
     plateaux = new CPlateaux();
+    this->visu = visu;
 }
 
 CSolver::~CSolver(void) {
@@ -87,10 +88,24 @@ void CSolver::process(void) {
 	int nbBille = 1;
 	
 	init();
-	
+
+	if(visu) {
+		initscr();
+		curs_set(0);
+	}
+
 	while(!fini) {
 		dout << "Nombre de bille: " << nbBille << ", nombre de plateau: " << plateaux->size() << std::endl;
-		
+
+		if(visu && !plateaux->empty()) {
+			clear();
+			move(0, 0);
+			printw("Bille: %d / %d   Plateaux explores: %lu", nbBille, MAX_BILLE, (unsigned long)plateaux->size());
+			(*plateaux->begin())->print(2, 2);
+			refresh();
+			napms(150);
+		}
+
 		nbBille++;
 		fini = nbBille == MAX_BILLE;
 		if(!fini) {
@@ -118,6 +133,10 @@ void CSolver::process(void) {
 			delete plateaux;
             plateaux = newPlateaux;
 		}
+	}
+	
+	if(visu) {
+		endwin();
 	}
 	
 	if(plateaux->size() >= 1) {

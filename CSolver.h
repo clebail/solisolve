@@ -7,12 +7,13 @@
 class CSolver {
 private:
 	CPlateaux *plateaux;
-	
+	bool visu;
+
 	void init(void);
 	bool addPlateauIfNotExistst(CPlateaux *plateaux, CPlateau *plateau);
 	void clearPlateaux(void);
 public:
-	CSolver(void);
+	CSolver(bool visu = false);
 	~CSolver(void);
 	int getNbPlateaux(void);
 	void process(void);
