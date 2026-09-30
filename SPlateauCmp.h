@@ -4,7 +4,7 @@
 #include "CPlateau.h"
 
 struct SPlateauCmp {
-	bool operator() (CPlateau *p1, CPlateau *p2) {
+	bool operator() (CPlateau *p1, CPlateau *p2) const {
 		return p1->getPoids() < p2->getPoids();
 	}
 };

@@ -16,6 +16,8 @@ public:
 	const CCoup::ETypeCoup& getType(void);
 	const int& getDepuis(void);
     void print(void);
+	int getPas(void);
+	void joue(unsigned char *plateau);
 	bool isNull(void);
 };
 

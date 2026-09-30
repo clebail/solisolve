@@ -1,13 +1,11 @@
-#include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
 #include "CSolver.h"
 #include "common.h"
 
-#define MAX_TEST	5000
 
-static unsigned char modele[NB_BILLE] = {
+unsigned char modele[NB_BILLE] = {
 	255, 255, 0, 0, 0, 255, 255, 
 	255, 0, 0, 0, 0, 0, 255, 
 	0, 0, 0, 0, 0, 0, 0, 
@@ -70,13 +68,18 @@ void CSolver::clearPlateaux(void) {
 	
 }
 
-CSolver::CSolver(bool visu) {
+CSolver::CSolver(FctVisu visu) {
     plateaux = new CPlateaux();
+    solution = 0;
     this->visu = visu;
 }
 
 CSolver::~CSolver(void) {
 	delete plateaux;
+}
+
+CPlateau * CSolver::getSolution(void) {
+	return solution;
 }
 
 int CSolver::getNbPlateaux(void) {
@@ -89,21 +92,11 @@ void CSolver::process(void) {
 	
 	init();
 
-	if(visu) {
-		initscr();
-		curs_set(0);
-	}
-
 	while(!fini) {
 		dout << "Nombre de bille: " << nbBille << ", nombre de plateau: " << plateaux->size() << std::endl;
 
 		if(visu && !plateaux->empty()) {
-			clear();
-			move(0, 0);
-			printw("Bille: %d / %d   Plateaux explores: %lu", nbBille, MAX_BILLE, (unsigned long)plateaux->size());
-			(*plateaux->begin())->print(2, 2);
-			refresh();
-			napms(150);
+			visu(plateaux, nbBille);
 		}
 
 		nbBille++;
@@ -112,7 +105,6 @@ void CSolver::process(void) {
 			std::set<CPlateau *, SPlateauCmp>::iterator it;
 			CPlateaux *newPlateaux = new CPlateaux();
             int nbTest = 0;
-			clear();
 			
 			for(it=plateaux->begin();it!=plateaux->end();it++) {
 				CPlateau *pl = *it;
@@ -135,12 +127,10 @@ void CSolver::process(void) {
 		}
 	}
 	
-	if(visu) {
-		endwin();
-	}
-	
 	if(plateaux->size() >= 1) {
         CPlateau *plateau = *(plateaux->begin());
+        
+        solution = plateau;
         std::list<CCoup> coups = plateau->getCoups();
         std::list<CCoup>::iterator itCoup;
         

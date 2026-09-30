@@ -29,6 +29,31 @@ void CCoup::print(void) {
     printf("M %c,%d %d\n", x, y, (int)type);
 }
 
+// Décalage d'indice entre deux cases voisines dans la direction du coup
+int CCoup::getPas(void) {
+	switch(type) {
+		case etcHaut:
+			return -NB_COLONNE;
+		case etcDroite:
+			return 1;
+		case etcBas:
+			return NB_COLONNE;
+		case etcGauche:
+			return -1;
+	}
+
+	return 0;
+}
+
+// Joue le coup dans le sens du jeu : la bille saute par-dessus sa voisine qui est retirée
+void CCoup::joue(unsigned char *plateau) {
+	int pas = getPas();
+
+	plateau[depuis] = VIDE;
+	plateau[depuis + pas] = VIDE;
+	plateau[depuis + pas * 2] = BILLE;
+}
+
 bool CCoup::isNull(void) {
 	return this->_isNull;
 }

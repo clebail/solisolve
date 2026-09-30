@@ -1,2 +1,9 @@
 *.o
-solisolv
+solisolve
+moc_*.*
+ui_*.*
+Makefile
+.qmake.stash
+build
+solisolve.pro.user
+qrc_*.*

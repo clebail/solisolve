@@ -34,6 +34,7 @@ public:
     std::list<CCoup> getCoups(void);
     void printVide(void);
 	unsigned long getPoids();
+    unsigned char * getPlateau();
 };
 
 #endif //__CPlateau__

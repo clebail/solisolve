@@ -211,6 +211,10 @@ unsigned long CPlateau::getPoids() {
 	return poids;
 }
 
+unsigned char * CPlateau::getPlateau() {
+    return plateau;
+}
+
 CCoup haut(unsigned char *plateau, int x, int y, int idx) {
 	if(y < NB_LIGNE - 2 && plateau[idx + NB_COLONNE] == VIDE && plateau[idx + NB_COLONNE * 2] == VIDE) {
 		return CCoup(CCoup::etcHaut, idx + NB_COLONNE * 2);

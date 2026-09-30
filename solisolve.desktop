@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Solver Solitaire
+Comment=Solveur du jeu du solitaire
+Exec=solisolve
+Icon=solisolve
+Terminal=false
+Categories=Game;LogicGame;

@@ -186,3 +186,97 @@ regardé jouer.
 - Une fois un premier enregistrement fait (terminal + navigateur), recaler ce
   script dessus et, si besoin, ajouter des incises ★ comme dans le script
   2048qt.
+
+---
+
+# Short — la solution en 35 coups
+
+> Format vertical 9:16, ~34 s, sans voix off : musique + animation de la
+> solution. Sert d'entonnoir vers la vidéo longue (lien « vidéo associée »).
+
+## Publication
+
+### Titre
+`Finir le solitaire avec UNE SEULE bille 🟣 #shorts`
+
+Variantes :
+- `35 coups parfaits : il ne reste qu'une bille #shorts`
+- `Mon programme résout le solitaire (37 trous) #shorts`
+
+### Description
+```
+Peut-on vider le plateau du solitaire jusqu'à ne garder qu'une seule bille ? 🟣
+
+Voici une solution complète en 35 coups sur le plateau français (37 trous),
+trouvée par un solveur que j'ai écrit en C++ / Qt.
+
+🎥 L'explication de l'algorithme (recherche à rebours, symétries,
+5000 plateaux par étape) dans la vidéo complète : [LIEN VIDÉO LONGUE]
+
+💻 Code source : https://github.com/clebail/solisolve
+
+🎵 Musique : Anachronist - Oddities – Kevin MacLeod (Bibliothèque audio YouTube)
+
+#solitaire #casseTête #algorithme #programmation #puzzle #shorts
+```
+À compléter : lien de la vidéo longue une fois en ligne, crédit musique (ou
+supprimer la ligne si le morceau ne demande pas d'attribution).
+
+### Vignette
+`video/vignette-short.png` (1080×1920), source `video/vignette-short.svg`.
+« UNE SEULE BILLE ? » en haut, le plateau au moment du dernier coup (bille en
+plein saut, trajectoire en pointillés vers le trou central), « Le dernier
+coup · 37 trous · 35 coups » en bas.
+
+YouTube choisit en général la miniature d'un short parmi les images de la
+vidéo : mettre la vignette en toute première image (1-2 images, invisible à la
+lecture) pour pouvoir la sélectionner.
+
+## Production
+
+### Séquence d'images
+Dans l'app : cocher **short** (plateau en 540×960), cocher **extraire les
+images** (choisir le dossier), lancer **solve** puis **solution**.
+
+La séquence `solution_00000.png` → `solution_00823.png` tourne à 24 images/s :
+
+| Partie | Durée | Images |
+|:-------|:------|:-------|
+| Intro « Finir avec une seule bille ? » sur le plateau de départ | 2 s | 48 |
+| « Coup 0 / 35 » | 0,2 s | 4 |
+| 35 coups (saut 16 images + pause 4) | 35 × 0,83 s | 700 |
+| Fin « Plus qu'une bille ! » | 3 s | 72 |
+
+Réglages en haut de `mainwindow.cpp` : `TEXTE_INTRO`, `DUREE_INTRO`,
+`DUREE_COUP`, `PAUSE_SOLUTION`, `TEXTE_FIN`, `DUREE_FIN`, `IMAGES_PAR_SECONDE`.
+
+### Musique
+- Style : léger et ludique (lo-fi, électro douce, marimba, pizzicato), une
+  petite montée vers la fin pour « Plus qu'une bille ! ».
+- Tempo : un coup = 20 images à 24 images/s = 0,833 s → **72 BPM** (un coup par
+  temps) ou **144 BPM** (un coup tous les deux temps). Pour un autre tempo,
+  ajuster `DUREE_COUP` + `PAUSE_SOLUTION`.
+- Bibliothèque audio YouTube (YouTube Studio) : chercher `playful`, `marimba`,
+  `pizzicato`, `quirky` ou `puzzle`, filtres Mood *Happy* / *Funky*, durée
+  ≥ 0:40, *Attribution not required*.
+- Bonus : un « toc » à chaque atterrissage et un « pop » quand la bille sautée
+  disparaît.
+
+### Encodage avec la musique
+La vidéo s'arrête à la fin des images (musique coupée si plus longue, silence
+si plus courte), avec un fondu de la musique sur les 2 dernières secondes :
+
+```
+N=$(ls solution_*.png | wc -l)
+D=$(echo "scale=3; $N / 24" | bc)
+F=$(echo "$D - 2" | bc)
+
+ffmpeg -framerate 24 -i solution_%05d.png -i musique.mp3 \
+  -map 0:v -map 1:a -t "$D" \
+  -af "afade=t=out:st=$F:d=2" \
+  -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 192k \
+  solution.mp4
+```
+
+Ajouter `-ss 12` juste avant `-i musique.mp3` pour démarrer la musique à 12 s
+(tomber sur un temps fort).
